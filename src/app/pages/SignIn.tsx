@@ -2,7 +2,8 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router';
 import { Eye, EyeOff } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import logoImg from '../../../public/schoolexpert_logo.png';
+const logoImg = '/schoolexpert_logo.png';
+import { toast } from 'sonner';
 
 // --- HELPER COMPONENTS (ICONS) ---
 
@@ -27,8 +28,10 @@ export function SignIn() {
   const [showPassword, setShowPassword] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const [isForgotPassword, setIsForgotPassword] = useState(false);
+  const [resetSent, setResetSent] = useState(false);
 
-  const { signInWithEmail, signInWithGoogle } = useAuth();
+  const { signInWithEmail, signInWithGoogle, sendPasswordResetEmail } = useAuth();
   const navigate = useNavigate();
 
   const handleSignIn = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -49,20 +52,27 @@ export function SignIn() {
     }
   };
 
-  const handleGoogleSignIn = async () => {
+  const handleForgotPassword = async (e: React.FormEvent<HTMLFormElement> | React.MouseEvent<HTMLButtonElement>) => {
+    if (e && 'preventDefault' in e) {
+      e.preventDefault();
+    }
+    if (!email) {
+      return setError('Please enter your email address.');
+    }
     setError('');
     setLoading(true);
     try {
-      await signInWithGoogle();
-      navigate('/');
+      await sendPasswordResetEmail(email);
+      setResetSent(true);
+      toast.success('Password reset link has been sent to your email.');
     } catch (err: any) {
       console.error(err);
-      setError(err.message || 'Google Sign-In failed.');
+      setError(err.message || 'Failed to send reset link. Please try again.');
+      toast.error(err.message || 'Failed to send reset link.');
     } finally {
       setLoading(false);
     }
   };
-
 
   return (
     <div className="h-[100dvh] flex flex-col md:flex-row font-geist w-[100dvw] bg-slate-50 dark:bg-zinc-950 overflow-hidden">
@@ -77,101 +87,189 @@ export function SignIn() {
               </Link>
             </div>
 
-            <h1 className="animate-element animate-delay-200 text-4xl md:text-5xl font-bold leading-tight text-slate-900 dark:text-slate-50 tracking-tight">
-              Welcome back
-            </h1>
-            <p className="animate-element animate-delay-300 text-slate-500 dark:text-slate-400">
-              Access your account and continue your journey with us
-            </p>
+            {!isForgotPassword ? (
+              <>
+                <h1 className="animate-element animate-delay-200 text-4xl md:text-5xl font-bold leading-tight text-slate-900 dark:text-slate-50 tracking-tight">
+                  Welcome back
+                </h1>
+                <p className="animate-element animate-delay-300 text-slate-500 dark:text-slate-400">
+                  Access your account and continue your journey with us
+                </p>
 
-            {/* Error Message */}
-            {error && (
-              <div className="animate-element animate-delay-300 p-4 bg-red-50 border border-red-200 text-red-600 rounded-2xl text-sm text-center font-medium">
-                {error}
-              </div>
-            )}
+                {/* Error Message */}
+                {error && (
+                  <div className="animate-element animate-delay-300 p-4 bg-red-50 border border-red-200 text-red-600 rounded-2xl text-sm text-center font-medium">
+                    {error}
+                  </div>
+                )}
 
-            <form className="space-y-5" onSubmit={handleSignIn}>
-              <div className="animate-element animate-delay-400">
-                <label className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 block">Email Address</label>
-                <GlassInputWrapper>
-                  <input
-                    name="email"
-                    type="email"
-                    value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    placeholder="Enter your email address"
-                    className="w-full bg-transparent text-sm p-4 rounded-2xl focus:outline-none text-slate-800 dark:text-slate-100"
-                    required
-                  />
-                </GlassInputWrapper>
-              </div>
+                <form className="space-y-5" onSubmit={handleSignIn}>
+                  <div className="animate-element animate-delay-400">
+                    <label className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 block">Email Address</label>
+                    <GlassInputWrapper>
+                      <input
+                        name="email"
+                        type="email"
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        placeholder="Enter your email address"
+                        className="w-full bg-transparent text-sm p-4 rounded-2xl focus:outline-none text-slate-800 dark:text-slate-100"
+                        required
+                      />
+                    </GlassInputWrapper>
+                  </div>
 
-              <div className="animate-element animate-delay-500">
-                <label className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 block">Password</label>
-                <GlassInputWrapper>
-                  <div className="relative">
-                    <input
-                      name="password"
-                      type={showPassword ? 'text' : 'password'}
-                      value={password}
-                      onChange={(e) => setPassword(e.target.value)}
-                      placeholder="Enter your password"
-                      className="w-full bg-transparent text-sm p-4 pr-12 rounded-2xl focus:outline-none text-slate-800 dark:text-slate-100"
-                      required
-                    />
+                  <div className="animate-element animate-delay-500">
+                    <label className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 block">Password</label>
+                    <GlassInputWrapper>
+                      <div className="relative">
+                        <input
+                          name="password"
+                          type={showPassword ? 'text' : 'password'}
+                          value={password}
+                          onChange={(e) => setPassword(e.target.value)}
+                          placeholder="Enter your password"
+                          className="w-full bg-transparent text-sm p-4 pr-12 rounded-2xl focus:outline-none text-slate-800 dark:text-slate-100"
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute inset-y-0 right-4 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+                        >
+                          {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                        </button>
+                      </div>
+                    </GlassInputWrapper>
+                  </div>
+
+                  <div className="animate-element animate-delay-600 flex items-center justify-between text-sm">
+                    <label className="flex items-center gap-3 cursor-pointer">
+                      <input type="checkbox" name="rememberMe" className="custom-checkbox" />
+                      <span className="text-slate-600 dark:text-slate-300 font-medium select-none">Keep me signed in</span>
+                    </label>
                     <button
                       type="button"
-                      onClick={() => setShowPassword(!showPassword)}
-                      className="absolute inset-y-0 right-4 flex items-center text-slate-400 hover:text-slate-600 dark:hover:text-slate-200 transition-colors"
+                      onClick={() => {
+                        setError('');
+                        setIsForgotPassword(true);
+                      }}
+                      className="hover:underline text-blue-600 dark:text-blue-400 font-semibold transition-colors cursor-pointer"
                     >
-                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
+                      Reset password
                     </button>
                   </div>
-                </GlassInputWrapper>
-              </div>
 
-              <div className="animate-element animate-delay-600 flex items-center justify-between text-sm">
-                <label className="flex items-center gap-3 cursor-pointer">
-                  <input type="checkbox" name="rememberMe" className="custom-checkbox" />
-                  <span className="text-slate-600 dark:text-slate-300 font-medium select-none">Keep me signed in</span>
-                </label>
-                <a href="#" className="hover:underline text-blue-600 dark:text-blue-400 font-semibold transition-colors">
+                  <button
+                    type="submit"
+                    disabled={loading}
+                    className="animate-element animate-delay-700 w-full rounded-2xl bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 py-4 font-semibold hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-[0.99] transition-all disabled:opacity-50 shadow-md"
+                  >
+                    {loading ? 'Signing In...' : 'Sign In'}
+                  </button>
+                </form>
+
+                <p className="animate-element animate-delay-1000 text-center text-sm text-slate-500 dark:text-slate-400">
+                  New to our platform?{' '}
+                  <Link to="/get-started" className="text-blue-600 dark:text-blue-400 font-bold hover:underline transition-colors">
+                    Create Account
+                  </Link>
+                </p>
+              </>
+            ) : (
+              <>
+                <h1 className="animate-element animate-delay-200 text-4xl md:text-5xl font-bold leading-tight text-slate-900 dark:text-slate-50 tracking-tight">
                   Reset password
-                </a>
-              </div>
+                </h1>
+                <p className="animate-element animate-delay-300 text-slate-500 dark:text-slate-400">
+                  {resetSent 
+                    ? "We've sent recovery details to your email."
+                    : "Enter your email address and we'll send you a password reset link."
+                  }
+                </p>
 
-              <button
-                type="submit"
-                disabled={loading}
-                className="animate-element animate-delay-700 w-full rounded-2xl bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 py-4 font-semibold hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-[0.99] transition-all disabled:opacity-50 shadow-md"
-              >
-                {loading ? 'Signing In...' : 'Sign In'}
-              </button>
-            </form>
+                {/* Error Message */}
+                {error && (
+                  <div className="animate-element animate-delay-300 p-4 bg-red-50 border border-red-200 text-red-600 rounded-2xl text-sm text-center font-medium">
+                    {error}
+                  </div>
+                )}
 
-            <div className="animate-element animate-delay-800 relative flex items-center justify-center py-2">
-              <span className="w-full border-t border-slate-200 dark:border-zinc-800"></span>
-              <span className="px-4 text-xs font-semibold text-slate-400 bg-slate-50 dark:bg-zinc-950 uppercase tracking-wider absolute">
-                Or continue with
-              </span>
-            </div>
+                {resetSent ? (
+                  <div className="space-y-6">
+                    <div className="p-6 bg-green-50/50 dark:bg-green-950/20 border border-green-200 dark:border-green-900 rounded-2xl text-center space-y-3">
+                      <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-green-100 dark:bg-green-900/50 text-green-600 dark:text-green-400 mx-auto">
+                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth={2.5} stroke="currentColor" className="w-6 h-6">
+                          <path strokeLinecap="round" strokeLinejoin="round" d="M4.5 12.75l6 6 9-13.5" />
+                        </svg>
+                      </div>
+                      <h3 className="font-bold text-slate-900 dark:text-slate-100">Check your email</h3>
+                      <p className="text-sm text-slate-600 dark:text-slate-400 leading-relaxed">
+                        We have sent a password reset link to <strong className="text-slate-800 dark:text-slate-200">{email}</strong>. Please click the link to reset your password.
+                      </p>
+                    </div>
 
-            <button
-              onClick={handleGoogleSignIn}
-              disabled={loading}
-              className="animate-element animate-delay-900 w-full flex items-center justify-center gap-3 border border-slate-200 dark:border-zinc-800 bg-white/70 dark:bg-zinc-900/50 rounded-2xl py-4 font-semibold text-slate-700 dark:text-slate-200 hover:bg-slate-50 dark:hover:bg-zinc-900 active:scale-[0.99] transition-all shadow-sm"
-            >
-              <GoogleIcon />
-              Continue with Google
-            </button>
+                    <div className="flex flex-col gap-3">
+                      <button
+                        type="button"
+                        onClick={handleForgotPassword}
+                        disabled={loading}
+                        className="w-full rounded-2xl border border-slate-200 bg-white/70 py-4 font-semibold text-slate-700 hover:bg-slate-50 active:scale-[0.99] transition-all disabled:opacity-50 cursor-pointer"
+                      >
+                        {loading ? 'Resending...' : 'Resend Email'}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setIsForgotPassword(false);
+                          setResetSent(false);
+                          setError('');
+                        }}
+                        className="w-full text-center text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline py-2 cursor-pointer"
+                      >
+                        Back to Sign In
+                      </button>
+                    </div>
+                  </div>
+                ) : (
+                  <form className="space-y-5" onSubmit={handleForgotPassword}>
+                    <div className="animate-element animate-delay-400">
+                      <label className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 block">Email Address</label>
+                      <GlassInputWrapper>
+                        <input
+                          name="email"
+                          type="email"
+                          value={email}
+                          onChange={(e) => setEmail(e.target.value)}
+                          placeholder="Enter your email address"
+                          className="w-full bg-transparent text-sm p-4 rounded-2xl focus:outline-none text-slate-800 dark:text-slate-100"
+                          required
+                        />
+                      </GlassInputWrapper>
+                    </div>
 
-            <p className="animate-element animate-delay-1000 text-center text-sm text-slate-500 dark:text-slate-400">
-              New to our platform?{' '}
-              <Link to="/get-started" className="text-blue-600 dark:text-blue-400 font-bold hover:underline transition-colors">
-                Create Account
-              </Link>
-            </p>
+                    <button
+                      type="submit"
+                      disabled={loading}
+                      className="animate-element animate-delay-500 w-full rounded-2xl bg-slate-900 dark:bg-slate-50 text-white dark:text-slate-900 py-4 font-semibold hover:bg-slate-800 dark:hover:bg-slate-100 active:scale-[0.99] transition-all disabled:opacity-50 shadow-md cursor-pointer"
+                    >
+                      {loading ? 'Sending Link...' : 'Send Reset Link'}
+                    </button>
+
+                    <button
+                      type="button"
+                      onClick={() => {
+                        setIsForgotPassword(false);
+                        setError('');
+                      }}
+                      className="w-full text-center text-sm font-semibold text-blue-600 dark:text-blue-400 hover:underline py-2 block cursor-pointer"
+                    >
+                      Back to Sign In
+                    </button>
+                  </form>
+                )}
+              </>
+            )}
           </div>
         </div>
       </section>
@@ -181,7 +279,7 @@ export function SignIn() {
         <div
           className="animate-slide-right animate-delay-300 absolute inset-4 rounded-3xl bg-cover bg-center shadow-xl overflow-hidden"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1580582932707-520aed937b7b?w=1000&auto=format&fit=crop&q=80')`,
+            backgroundImage: `url('https://images.unsplash.com/photo-1542587227-8802646daa56?q=80&w=1170&auto=format&fit=crop&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8fA%3D%3D')`,
           }}
         >
           {/* Subtle dark overlay for better text contrast */}

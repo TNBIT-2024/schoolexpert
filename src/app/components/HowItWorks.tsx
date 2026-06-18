@@ -1,5 +1,5 @@
 import { motion } from 'motion/react';
-import { Search, Users, MessageSquare, CheckCircle } from 'lucide-react';
+import { Search, Users } from 'lucide-react';
 
 export function HowItWorks() {
   const steps = [
@@ -14,18 +14,6 @@ export function HowItWorks() {
       title: 'Connect & Learn',
       description: 'Read verified reviews, join parent communities, and get real insights from families who have been there.',
       gradient: 'from-purple-500 to-pink-500',
-    },
-    {
-      icon: MessageSquare,
-      title: 'Engage & Visit',
-      description: 'Chat with schools directly, schedule visits, ask all your questions, and compare options.',
-      gradient: 'from-green-500 to-emerald-500',
-    },
-    {
-      icon: CheckCircle,
-      title: 'Apply & Enroll',
-      description: 'Track applications, manage deadlines, and complete the enrollment process seamlessly through our platform.',
-      gradient: 'from-orange-500 to-red-500',
     },
   ];
 
@@ -47,7 +35,7 @@ export function HowItWorks() {
           <h2 className="text-5xl lg:text-6xl font-black text-gray-900 mb-6 tracking-tight">
             How{' '}
             <span className="text-amber-600 italic">
-              SchoolExpert
+              The School Expert
             </span>{' '}
             Works
           </h2>
@@ -57,7 +45,7 @@ export function HowItWorks() {
         </motion.div>
 
         {/* Steps - Modern Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-4xl mx-auto">
           {steps.map((step, index) => (
             <motion.div
               key={index}

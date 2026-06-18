@@ -1,15 +1,8 @@
 import { motion } from 'motion/react';
-import { Brain, Users, Search, MessageCircle, Star, Shield, TrendingUp } from 'lucide-react';
+import { Users, Star, Shield } from 'lucide-react';
 
 export function Features() {
   const features = [
-    {
-      icon: Brain,
-      title: 'AI-Powered Recommendations',
-      description: 'Get personalized school suggestions based on your preferences, location, and educational requirements using advanced AI.',
-      gradient: 'from-blue-500 to-cyan-500',
-      delay: 0.1,
-    },
     {
       icon: Users,
       title: 'Parent Community',
@@ -18,40 +11,18 @@ export function Features() {
       delay: 0.2,
     },
     {
-      icon: Search,
-      title: 'Smart School Search',
-      description: 'Search across 10,000+ schools with advanced filters for board, fees, location, facilities, and more.',
-      gradient: 'from-green-500 to-emerald-500',
-      delay: 0.3,
-    },
-    {
-      icon: MessageCircle,
-      title: 'Direct Communication',
-      description: 'Chat directly with school administrators, schedule visits, and get your questions answered in real-time.',
-      gradient: 'from-orange-500 to-red-500',
-      delay: 0.4,
-    },
-    {
       icon: Star,
-      title: 'Verified Reviews',
+      title: 'Reviews',
       description: 'Read authentic reviews from real parents. All reviews are verified to ensure genuine feedback.',
       gradient: 'from-yellow-500 to-orange-500',
       delay: 0.5,
     },
-
     {
       icon: Shield,
-      title: 'Verified Information',
+      title: 'Information',
       description: 'All school information is verified and updated regularly. Get accurate details about admissions, fees, and facilities.',
       gradient: 'from-teal-500 to-cyan-500',
       delay: 0.7,
-    },
-    {
-      icon: TrendingUp,
-      title: 'Admission Tracking',
-      description: 'Track your admission applications, deadlines, and requirements all in one place. Never miss an important date.',
-      gradient: 'from-rose-500 to-pink-500',
-      delay: 0.8,
     },
   ];
 
@@ -107,9 +78,7 @@ export function Features() {
                 <p className="text-slate-600 text-sm leading-relaxed font-medium">
                   {feature.description}
                 </p>
-                <div className="mt-6 px-4 py-1.5 bg-card text-amber-600 text-[10px] font-black uppercase tracking-widest rounded-full border border-slate-200/60">
-                  Learn More
-                </div>
+
               </div>
             </motion.div>
           ))}

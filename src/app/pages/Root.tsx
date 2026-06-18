@@ -1,5 +1,10 @@
-import { Outlet } from 'react-router';
+import { Outlet, ScrollRestoration } from 'react-router';
 
 export function Root() {
-  return <Outlet />;
+  return (
+    <>
+      <ScrollRestoration />
+      <Outlet />
+    </>
+  );
 }

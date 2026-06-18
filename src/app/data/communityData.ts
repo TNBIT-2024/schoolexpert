@@ -9,6 +9,16 @@ export interface Comment {
   timestamp: string;
 }
 
+export interface ChatMessage {
+  id: string;
+  user_id: string | null;
+  user_name: string;
+  user_role: string;
+  user_avatar: string;
+  content: string;
+  created_at: string;
+}
+
 export interface ForumPost {
   id: string;
   title: string;

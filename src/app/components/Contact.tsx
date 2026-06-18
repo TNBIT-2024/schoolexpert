@@ -1,10 +1,10 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Mail, Phone, MapPin, Calendar, Clock, Send, CheckCircle2 } from 'lucide-react';
+import { Mail, MapPin, Send, CheckCircle2 } from 'lucide-react';
 import { Button } from './ui/button';
 
 export function Contact() {
-  const [activeForm, setActiveForm] = useState<'message' | 'demo'>('message');
+
   const [submitted, setSubmitted] = useState(false);
   const [formData, setFormData] = useState({
     name: '',
@@ -84,20 +84,8 @@ export function Contact() {
                 </div>
                 <div>
                   <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Email Us</div>
-                  <a href="mailto:support@schoolexpert.com" className="text-slate-800 font-black hover:text-amber-600 transition-colors">
+                  <a href="mailto:info@schoolexpert.in" className="text-slate-800 font-black hover:text-amber-600 transition-colors">
                     info@schoolexpert.in
-                  </a>
-                </div>
-              </div>
-
-              <div className="group bg-card border border-slate-200/60 rounded-2xl p-6 flex items-center space-x-5 shadow-sm hover:shadow-md hover:border-amber-600/30 transition-all duration-300">
-                <div className="w-12 h-12 rounded-xl bg-[#F5EFEB]/60 border border-slate-200/60 flex items-center justify-center flex-shrink-0 transition-colors group-hover:bg-amber-600 group-hover:border-amber-600">
-                  <Phone className="w-5 h-5 text-amber-600 group-hover:text-white transition-colors" />
-                </div>
-                <div>
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Call Directly</div>
-                  <a href="tel:+918049102030" className="text-slate-800 font-black hover:text-amber-600 transition-colors">
-                    +91 9515112405
                   </a>
                 </div>
               </div>
@@ -121,31 +109,7 @@ export function Contact() {
           <div className="lg:col-span-7">
             <div className="bg-card border border-slate-200/65 p-8 rounded-[2.5rem] shadow-xl relative overflow-hidden">
               
-              {/* Form Toggle Segmented Control */}
-              <div className="flex bg-[#F5EFEB]/70 border border-slate-200/40 rounded-full p-1.5 mb-8 max-w-md mx-auto">
-                <button
-                  type="button"
-                  onClick={() => { setActiveForm('message'); setSubmitted(false); }}
-                  className={`flex-1 py-3 text-center rounded-full text-xs font-black uppercase tracking-wider transition-all duration-300 ${
-                    activeForm === 'message'
-                      ? 'bg-amber-600 text-white shadow-md'
-                      : 'text-slate-600 hover:text-slate-800'
-                  }`}
-                >
-                  Contact Us
-                </button>
-                <button
-                  type="button"
-                  onClick={() => { setActiveForm('demo'); setSubmitted(false); }}
-                  className={`flex-1 py-3 text-center rounded-full text-xs font-black uppercase tracking-wider transition-all duration-300 ${
-                    activeForm === 'demo'
-                      ? 'bg-amber-600 text-white shadow-md'
-                      : 'text-slate-600 hover:text-slate-800'
-                  }`}
-                >
-                  Book a Demo
-                </button>
-              </div>
+
 
               {/* Form Content Area */}
               <AnimatePresence mode="wait">
@@ -160,14 +124,12 @@ export function Contact() {
                     <CheckCircle2 className="w-16 h-16 text-emerald-500 animate-bounce" />
                     <h4 className="text-2xl font-black text-slate-900">Request Received!</h4>
                     <p className="text-slate-500 font-medium max-w-sm">
-                      {activeForm === 'demo'
-                        ? "We have locked in your preference. One of our lead auditors will call shortly to confirm your live platform demo."
-                        : "Thank you for getting in touch! Our support specialists will respond within the next 24 business hours."}
+                      Thank you for getting in touch! Our support specialists will respond within the next 24 business hours.
                     </p>
                   </motion.div>
                 ) : (
                   <motion.form
-                    key={activeForm}
+                    key="message"
                     initial={{ opacity: 0, y: 15 }}
                     animate={{ opacity: 1, y: 0 }}
                     exit={{ opacity: 0, y: -15 }}
@@ -203,93 +165,39 @@ export function Contact() {
                       </div>
                     </div>
 
-                    {/* Form-specific fields */}
-                    {activeForm === 'message' ? (
-                      <>
-                        <div className="space-y-2">
-                          <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Subject</label>
-                          <input
-                            type="text"
-                            name="subject"
-                            required
-                            value={formData.subject}
-                            onChange={handleInputChange}
-                            placeholder="How can we assist you?"
-                            className="w-full px-5 py-3.5 bg-[#F5EFEB]/20 border border-slate-200 rounded-2xl focus:outline-none focus:border-amber-600 text-slate-900 font-medium placeholder-slate-400/80 transition-colors"
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Your Message</label>
-                          <textarea
-                            name="message"
-                            rows={4}
-                            required
-                            value={formData.message}
-                            onChange={handleInputChange}
-                            placeholder="Write your query details here..."
-                            className="w-full px-5 py-3.5 bg-[#F5EFEB]/20 border border-slate-200 rounded-2xl focus:outline-none focus:border-amber-600 text-slate-900 font-medium placeholder-slate-400/80 transition-colors resize-none"
-                          />
-                        </div>
-                      </>
-                    ) : (
-                      <>
-                        <div className="space-y-2">
-                          <label className="text-xs font-black text-slate-400 uppercase tracking-widest">School or Institution Name</label>
-                          <input
-                            type="text"
-                            name="schoolName"
-                            required
-                            value={formData.schoolName}
-                            onChange={handleInputChange}
-                            placeholder="e.g. Greenwood High School"
-                            className="w-full px-5 py-3.5 bg-[#F5EFEB]/20 border border-slate-200 rounded-2xl focus:outline-none focus:border-amber-600 text-slate-900 font-medium placeholder-slate-400/80 transition-colors"
-                          />
-                        </div>
-                        <div className="grid sm:grid-cols-2 gap-6">
-                          <div className="space-y-2">
-                            <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Preferred Date</label>
-                            <div className="relative">
-                              <input
-                                type="date"
-                                name="preferredDate"
-                                required
-                                value={formData.preferredDate}
-                                onChange={handleInputChange}
-                                className="w-full px-5 py-3.5 bg-[#F5EFEB]/20 border border-slate-200 rounded-2xl focus:outline-none focus:border-amber-600 text-slate-900 font-medium transition-colors"
-                              />
-                            </div>
-                          </div>
-                          <div className="space-y-2">
-                            <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Preferred Time Slot</label>
-                            <input
-                              type="time"
-                              name="preferredTime"
-                              required
-                              value={formData.preferredTime}
-                              onChange={handleInputChange}
-                              className="w-full px-5 py-3.5 bg-[#F5EFEB]/20 border border-slate-200 rounded-2xl focus:outline-none focus:border-amber-600 text-slate-900 font-medium transition-colors"
-                            />
-                          </div>
-                        </div>
-                      </>
-                    )}
+                    {/* Contact form fields */}
+                    <div className="space-y-2">
+                      <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Subject</label>
+                      <input
+                        type="text"
+                        name="subject"
+                        required
+                        value={formData.subject}
+                        onChange={handleInputChange}
+                        placeholder="How can we assist you?"
+                        className="w-full px-5 py-3.5 bg-[#F5EFEB]/20 border border-slate-200 rounded-2xl focus:outline-none focus:border-amber-600 text-slate-900 font-medium placeholder-slate-400/80 transition-colors"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <label className="text-xs font-black text-slate-400 uppercase tracking-widest">Your Message</label>
+                      <textarea
+                        name="message"
+                        rows={4}
+                        required
+                        value={formData.message}
+                        onChange={handleInputChange}
+                        placeholder="Write your query details here..."
+                        className="w-full px-5 py-3.5 bg-[#F5EFEB]/20 border border-slate-200 rounded-2xl focus:outline-none focus:border-amber-600 text-slate-900 font-medium placeholder-slate-400/80 transition-colors resize-none"
+                      />
+                    </div>
 
                     {/* Submit Action */}
                     <Button
                       type="submit"
                       className="w-full py-4 bg-amber-600 hover:bg-amber-700 text-white font-black rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300 flex items-center justify-center space-x-3"
                     >
-                      {activeForm === 'demo' ? (
-                        <>
-                          <Calendar className="w-5 h-5" />
-                          <span>Request Demo Booking</span>
-                        </>
-                      ) : (
-                        <>
-                          <Send className="w-5 h-5" />
-                          <span>Send Message</span>
-                        </>
-                      )}
+                      <Send className="w-5 h-5" />
+                      <span>Send Message</span>
                     </Button>
                   </motion.form>
                 )}

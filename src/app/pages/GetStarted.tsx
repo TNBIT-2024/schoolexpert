@@ -1,8 +1,8 @@
 import React, { useState, FormEvent } from 'react';
-import { Link, useNavigate } from 'react-router';
+import { Link, useNavigate, useLocation } from 'react-router';
 import { Eye, EyeOff, User as UserIcon, Mail, Phone, MapPin, Lock, ArrowRight, ArrowLeft, Users, Building, Briefcase, GraduationCap } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-import logoImg from '../../../public/schoolexpert_logo.png';
+const logoImg = '/schoolexpert_logo.png';
 
 // --- HELPER COMPONENTS (ICONS) ---
 
@@ -22,11 +22,16 @@ const GlassInputWrapper = ({ children }: { children: React.ReactNode }) => (
 );
 
 export function GetStarted() {
+  const location = useLocation();
+  const queryType = new URLSearchParams(location.search).get('type');
 
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
-  const [userType, setUserType] = useState<'parent' | 'school' | 'service' | 'educator' | 'special_educator' | null>(null);
+  const [userType, setUserType] = useState<'parent' | 'school' | 'service' | 'educator' | 'special_educator' | null>(
+    (location.state?.userType === 'school' || queryType === 'school') ? 'school' : null
+  );
   const [serviceType, setServiceType] = useState<string>('');
+  const [schoolType, setSchoolType] = useState<string>('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
 
@@ -60,6 +65,7 @@ export function GetStarted() {
         city: formData.city,
         userType: userType,
         serviceType: userType === 'service' ? serviceType : null,
+        schoolType: userType === 'school' ? schoolType : null,
       });
       navigate('/');
     } catch (err: any) {
@@ -144,6 +150,8 @@ export function GetStarted() {
             {/* Step 1: Select Profile */}
             {step === 1 && (
               <div className="space-y-4">
+                <label className="text-lg font-semibold text-slate-900 dark:text-slate-100 mb-1.5 block  tracking-wider">I'm...</label>
+
                 <button
                   type="button"
                   onClick={() => setUserType('parent')}
@@ -158,7 +166,7 @@ export function GetStarted() {
                       <Users className="w-6 h-6" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-slate-800 dark:text-slate-100">I'm a Parent</h4>
+                      <h4 className="font-bold text-slate-800 dark:text-slate-100">A Parent</h4>
                       <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Search schools and read reviews</p>
                     </div>
                   </div>
@@ -181,7 +189,7 @@ export function GetStarted() {
                       <Building className="w-6 h-6" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-slate-800 dark:text-slate-100">I'm a School</h4>
+                      <h4 className="font-bold text-slate-800 dark:text-slate-100">A School</h4>
                       <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Manage details and admission requests</p>
                     </div>
                   </div>
@@ -189,6 +197,26 @@ export function GetStarted() {
                     {userType === 'school' && <span className="text-[10px] font-bold">✓</span>}
                   </div>
                 </button>
+
+                {userType === 'school' && (
+                  <div className="animate-element mt-3">
+                    <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Select your School Type</label>
+                    <div className="rounded-2xl border border-slate-200 bg-white/60 backdrop-blur-sm p-1.5">
+                      <select
+                        value={schoolType}
+                        onChange={(e) => setSchoolType(e.target.value)}
+                        className="w-full bg-transparent text-sm p-2.5 rounded-xl focus:outline-none text-slate-800 font-medium cursor-pointer"
+                        required
+                      >
+                        <option value="" disabled>-- Select a School --</option>
+                        <option value="Regular School">Regular School</option>
+                        <option value="Alternative School">Alternative School</option>
+                        <option value="Preschool/Nursery School">Preschool/Nursery School</option>
+                        <option value="Special School">Special School</option>
+                      </select>
+                    </div>
+                  </div>
+                )}
 
                 <button
                   type="button"
@@ -204,7 +232,7 @@ export function GetStarted() {
                       <GraduationCap className="w-6 h-6" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-slate-800 dark:text-slate-100">Educator / Teacher</h4>
+                      <h4 className="font-bold text-slate-800 dark:text-slate-100">An Educator / A Teacher</h4>
                       <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Connect with schools and students</p>
                     </div>
                   </div>
@@ -227,7 +255,7 @@ export function GetStarted() {
                       <GraduationCap className="w-6 h-6 text-purple-650" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-slate-800 dark:text-slate-100">Special Educator</h4>
+                      <h4 className="font-bold text-slate-800 dark:text-slate-100">A Special Educator</h4>
                       <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Support and teach students with special needs</p>
                     </div>
                   </div>
@@ -250,7 +278,7 @@ export function GetStarted() {
                       <Briefcase className="w-6 h-6" />
                     </div>
                     <div>
-                      <h4 className="font-bold text-slate-800 dark:text-slate-100">I'm a Service Provider</h4>
+                      <h4 className="font-bold text-slate-800 dark:text-slate-100">A Service Provider</h4>
                       <p className="text-xs text-slate-500 dark:text-slate-400 mt-0.5">Offer educational services and solutions</p>
                     </div>
                   </div>
@@ -277,6 +305,10 @@ export function GetStarted() {
                         <option value="Skill Development Providers">Skill Development Providers</option>
                         <option value="International Education Consultants">International Education Consultants</option>
                         <option value="Infrastructure / School Equipment Vendors">Infrastructure / School Equipment Vendors</option>
+                        <option value="Career Coaching & Counselling">Career Coaching & Counselling</option> 
+                        <option value="Mental health professionals">Mental health professionals</option>
+                        <option value="Individual course providers">Individual course providers</option>
+                        
                       </select>
                     </div>
                   </div>
@@ -482,7 +514,7 @@ export function GetStarted() {
         <div
           className="animate-slide-right animate-delay-300 absolute inset-4 rounded-3xl bg-cover bg-center shadow-xl overflow-hidden"
           style={{
-            backgroundImage: `url('https://images.unsplash.com/photo-1546410531-bb4caa6b424d?w=1000&auto=format&fit=crop&q=80')`,
+            backgroundImage: `url('https://images.unsplash.com/photo-1596464716127-f2a82984de30?w=1000&auto=format&fit=crop&q=80')`,
           }}
         >
           {/* Subtle dark overlay for better text contrast */}

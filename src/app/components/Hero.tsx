@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Sparkles, ArrowRight, Flame, Phone, Copy, CheckCircle2 } from 'lucide-react';
+import { ArrowRight, Flame, Phone, Copy, CheckCircle2 } from 'lucide-react';
 import { Button } from './ui/button';
 import { motion } from 'motion/react';
 import { Link } from 'react-router';
@@ -27,24 +27,16 @@ export function Hero() {
             initial={{ opacity: 0, x: -30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, ease: 'easeOut' }}
-            className="lg:col-span-7 space-y-8 text-left"
+            className="lg:col-span-6 space-y-8 text-left"
           >
-            {/* Top Tag/Badge */}
-            <div className="inline-flex items-center gap-2 px-4 py-1.5 rounded-full bg-amber-500/10 border border-amber-500/20 text-amber-800 text-xs font-bold uppercase tracking-wider">
-              <Sparkles className="w-3.5 h-3.5 text-amber-600 fill-amber-600" />
-              Founding Partners Program Now Live
-            </div>
 
             {/* Headline */}
             <div className="space-y-4">
-              <h1 className="text-4xl sm:text-5xl lg:text-6xl leading-[1.1] text-slate-900 font-extrabold tracking-tight">
-                Find the right school with{' '}
-                <span className="text-primary block sm:inline">
-                  proof, not guesswork
-                </span>
+              <h1 className="text-4xl sm:text-5xl lg:text-6xl leading-[1.15] text-slate-900 font-extrabold tracking-tight">
+                Find the right school <span className="block mt-2 text-transparent bg-clip-text bg-gradient-to-r from-amber-600 to-amber-700">with proof, not guesswork</span>
               </h1>
               <p className="text-lg text-slate-600 leading-relaxed max-w-xl font-medium">
-                SchoolExpert brings verified reviews, quantified infrastructure scores, and live consultation support so families can compare institutions with clarity.
+                Our platform empowers families to make informed decisions, helps institutions increase visibility and engagement, enables educators to collaborate and grow professionally, and provides education-focused businesses with opportunities to reach the right audience.
               </p>
             </div>
 
@@ -69,7 +61,7 @@ export function Hero() {
             initial={{ opacity: 0, x: 30 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.8, delay: 0.2, ease: 'easeOut' }}
-            className="lg:col-span-5 flex flex-col justify-center"
+            className="lg:col-span-6 flex flex-col justify-center lg:pt-12"
           >
             {/* Card Wrapper */}
             <div className="relative bg-[#FAF6F0]/70 border border-slate-200/60 rounded-[2.5rem] p-6 md:p-8 shadow-2xl backdrop-blur-md overflow-hidden max-w-lg mx-auto lg:mr-0 w-full">

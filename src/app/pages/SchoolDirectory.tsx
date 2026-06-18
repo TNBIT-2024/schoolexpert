@@ -47,16 +47,13 @@ export function SchoolDirectory() {
             transition={{ duration: 0.6 }}
             className="text-center mb-12"
           >
-            <div className="inline-flex items-center space-x-2 bg-amber-500/20 backdrop-blur-sm px-4 py-2 rounded-full mb-6 border border-amber-500/30">
-              <Award className="w-4 h-4 text-amber-400" />
-              <span className="text-sm text-amber-200">Mysore pilot | Verified parent intelligence</span>
-            </div>
+          
 
             <h1 className="text-5xl mb-6">
               Find the right school with <span className="text-amber-400">proof, not guesswork</span>
             </h1>
             <p className="text-xl text-slate-300 max-w-3xl mx-auto mb-8">
-              SchoolExpert brings verified reviews, quantified infrastructure scores, and live consultation support so families can compare institutions with clarity.
+              SchoolExpert brings reviews, quantified infrastructure scores, so families can compare institutions with clarity.
             </p>
 
             {/* Stats */}

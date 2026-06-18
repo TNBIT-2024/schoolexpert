@@ -1,8 +1,7 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
 @import './fonts.css';
 @import './tailwind.css';
 @import './theme.css';
-
-@import url('https://fonts.googleapis.com/css2?family=Geist:wght@100..900&display=swap');
 
 :root {
   --bg-landing: linear-gradient(135deg, #faf7f2 0%, #efe9e0 50%, #e2d9cd 100%);

@@ -58,8 +58,8 @@ export function TrustedBy() {
           transition={{ duration: 0.6 }}
           className="text-center mb-12"
         >
-          <h3 className="text-xl text-slate-800 font-semibold mb-2">Trusted Education Boards</h3>
-          <p className="text-slate-500 max-w-xl mx-auto text-sm">Supporting schools and parents across all major boards in India with verified reviews and scores</p>
+          <h3 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight mb-3">Trusted Education Boards</h3>
+          <p className="text-base sm:text-lg text-slate-500 max-w-2xl mx-auto font-medium">We aim to provide you verified and reliable information.</p>
         </motion.div>
 
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-6">

@@ -32,6 +32,8 @@ export function EditProfileModal({ isOpen, onClose }: EditProfileModalProps) {
   const [name, setName] = useState('');
   const [phone, setPhone] = useState('');
   const [city, setCity] = useState('');
+  const [avatarUrl, setAvatarUrl] = useState('');
+  const [uploading, setUploading] = useState(false);
 
   useEffect(() => {
     if (!isOpen || !currentUser?.id) return;
@@ -54,6 +56,7 @@ export function EditProfileModal({ isOpen, onClose }: EditProfileModalProps) {
           setName(data.name || '');
           setPhone(data.phone || '');
           setCity(data.city || '');
+          setAvatarUrl(data.avatar_url || '');
         }
       } catch (err: any) {
         console.error('Error fetching profile in modal:', err);
@@ -65,6 +68,49 @@ export function EditProfileModal({ isOpen, onClose }: EditProfileModalProps) {
 
     loadProfile();
   }, [isOpen, currentUser]);
+
+  const handleAvatarChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (!e.target.files || e.target.files.length === 0) return;
+    const file = e.target.files[0];
+
+    // Check file type
+    if (!file.type.startsWith('image/')) {
+      toast.error('Please select an image file.');
+      return;
+    }
+
+    // Check file size (max 2MB)
+    if (file.size > 2 * 1024 * 1024) {
+      toast.error('Image size must be less than 2MB.');
+      return;
+    }
+
+    try {
+      setUploading(true);
+      setError('');
+
+      const fileExt = file.name.split('.').pop();
+      const fileName = `avatar-${Date.now()}.${fileExt}`;
+      const filePath = `${currentUser.id}/${fileName}`;
+
+      // Upload file to Supabase Storage bucket 'avatars'
+      const { error: uploadError } = await supabase.storage
+        .from('avatars')
+        .upload(filePath, file, { upsert: true });
+
+      if (uploadError) throw uploadError;
+
+      // Get public URL
+      const { data } = supabase.storage.from('avatars').getPublicUrl(filePath);
+      setAvatarUrl(data.publicUrl);
+      toast.success('Profile picture uploaded!');
+    } catch (err: any) {
+      console.error('Error uploading avatar:', err);
+      toast.error(err.message || 'Failed to upload profile picture.');
+    } finally {
+      setUploading(false);
+    }
+  };
 
   const handleSave = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -82,6 +128,7 @@ export function EditProfileModal({ isOpen, onClose }: EditProfileModalProps) {
           name: name.trim(),
           phone: phone.trim(),
           city: city.trim(),
+          avatar_url: avatarUrl,
         }
       });
       if (authErr) throw authErr;
@@ -93,6 +140,7 @@ export function EditProfileModal({ isOpen, onClose }: EditProfileModalProps) {
           name: name.trim(),
           phone: phone.trim(),
           city: city.trim(),
+          avatar_url: avatarUrl,
         })
         .eq('id', currentUser.id);
       if (dbErr) throw dbErr;
@@ -137,10 +185,39 @@ export function EditProfileModal({ isOpen, onClose }: EditProfileModalProps) {
           
           {/* Avatar & Title Row */}
           <div className="flex items-end gap-3 mb-6">
-            <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white text-xl font-black border-2 border-white shadow-md">
-              {name ? name[0].toUpperCase() : '?'}
+            <div className="relative group flex-shrink-0">
+              {avatarUrl ? (
+                <img
+                  src={avatarUrl}
+                  alt="Profile"
+                  className="w-16 h-16 rounded-2xl object-cover border-2 border-white shadow-md"
+                />
+              ) : (
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-amber-500 to-orange-500 flex items-center justify-center text-white text-xl font-black border-2 border-white shadow-md select-none">
+                  {name ? name[0].toUpperCase() : '?'}
+                </div>
+              )}
+              
+              <label 
+                htmlFor="avatar-input" 
+                className="absolute inset-0 bg-black/40 rounded-2xl flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity duration-200 cursor-pointer text-white border-2 border-transparent"
+              >
+                {uploading ? (
+                  <Loader2 className="w-5 h-5 animate-spin" />
+                ) : (
+                  <span className="text-[10px] font-bold tracking-wider uppercase text-center px-1">Change</span>
+                )}
+              </label>
+              <input
+                id="avatar-input"
+                type="file"
+                accept="image/*"
+                onChange={handleAvatarChange}
+                disabled={uploading || saving}
+                className="hidden"
+              />
             </div>
-            <div className="pb-1">
+            <div className="pb-1 min-w-0 flex-1">
               <h2 className="text-xl font-bold text-slate-900 dark:text-slate-50 leading-tight">Edit Profile</h2>
               <div className="flex items-center gap-1 text-xs font-semibold text-amber-600 dark:text-amber-500 capitalize mt-0.5">
                 {profile?.user_type === 'parent' && <UserIcon className="w-3 h-3" />}
