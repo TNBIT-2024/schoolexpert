@@ -172,6 +172,9 @@ function PostCard({
   const [localComments, setLocalComments]   = useState<Comment[]>(post.comments);
   const [showDropdown, setShowDropdown]     = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
+  const [isExpanded, setIsExpanded]         = useState(false);
+
+  const isLongContent = post.content.length > 250 || post.content.split('\n').length > 3;
 
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
@@ -290,7 +293,15 @@ function PostCard({
 
         {/* Title + Content */}
         <h3 className="font-bold text-slate-900 text-sm mb-1.5 leading-snug">{post.title}</h3>
-        <p className="text-slate-600 text-sm leading-relaxed line-clamp-3">{post.content}</p>
+        <p className={`text-slate-600 text-sm leading-relaxed whitespace-pre-line ${isExpanded ? '' : 'line-clamp-3'}`}>{post.content}</p>
+        {isLongContent && (
+          <button
+            onClick={() => setIsExpanded(!isExpanded)}
+            className="text-amber-600 hover:text-amber-700 text-xs font-bold mt-1.5 mb-1 transition-colors focus:outline-none cursor-pointer"
+          >
+            {isExpanded ? 'See less' : 'See more'}
+          </button>
+        )}
 
         {/* Divider */}
         <div className="border-t border-slate-100 my-3" />
@@ -1162,14 +1173,14 @@ export function CommunityPage() {
             )}
 
             {/* Load More */}
-            {!loading && !error && sortedPosts.length > 0 && (
+            {/* {!loading && !error && sortedPosts.length > 0 && (
               <button
                 onClick={fetchPosts}
                 className="w-full py-3 bg-card/80 backdrop-blur-md rounded-2xl border border-slate-200/50 shadow-sm text-sm font-bold text-slate-500 hover:text-amber-650 hover:border-amber-500/40 hover:bg-card/95 transition-all duration-200 cursor-pointer text-center"
               >
                 Refresh discussions ↺
               </button>
-            )}
+            )} */}
           </main>
 
         </div>
