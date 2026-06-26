@@ -55,7 +55,7 @@ export interface School {
 export const schools: School[] = [
   {
     id: 1,
-    name: 'Delhi Public School',
+    name: 'ABC Public School',
     location: 'Mysore, Karnataka',
     address: '123 Education Street, Vijayanagar, Mysore - 570017, Karnataka, India',
     board: 'CBSE',
@@ -69,8 +69,8 @@ export const schools: School[] = [
     sports: ['Cricket', 'Football', 'Basketball', 'Swimming', 'Tennis', 'Badminton', 'Athletics', 'Yoga'],
     infrastructureScore: 92,
     phone: '+91 821 2345678',
-    email: 'info@dpsmysore.edu.in',
-    website: 'www.dpsmysore.edu.in',
+    email: 'info@ABCmysore.edu.in',
+    website: 'www.ABCmysore.edu.in',
     management: {
       type: 'CBSE Affiliated',
       affiliationNumber: '123456',
@@ -115,7 +115,7 @@ export const schools: School[] = [
   },
   {
     id: 2,
-    name: 'Jain International School',
+    name: 'XYZ International School',
     location: 'Bangalore, Karnataka',
     address: '456 Tech Park Road, Whitefield, Bangalore - 560066, Karnataka, India',
     board: 'ICSE',
@@ -129,13 +129,13 @@ export const schools: School[] = [
     sports: ['Tennis', 'Badminton', 'Athletics', 'Yoga'],
     infrastructureScore: 88,
     phone: '+91 80 98765432',
-    email: 'admissions@jaininternational.edu.in',
-    website: 'www.jaininternational.edu.in',
+    email: 'admissions@xyzinternational.edu.in',
+    website: 'www.xyzinternational.edu.in',
     management: {
       type: 'ICSE Affiliated',
       affiliationNumber: 'KA-098',
       principal: 'Mrs. Shalini Murthy',
-      establishedBy: 'Jain Group of Institutions',
+      establishedBy: 'XYZ Group of Institutions',
     },
     syllabus: {
       board: 'ICSE',
@@ -173,7 +173,7 @@ export const schools: School[] = [
   },
   {
     id: 3,
-    name: 'Kendriya Vidyalaya',
+    name: 'ABC Vidyalaya',
     location: 'Mysore, Karnataka',
     address: '789 Heritage Road, Siddharthanagar, Mysore - 570011, Karnataka, India',
     board: 'CBSE',
@@ -187,13 +187,13 @@ export const schools: School[] = [
     sports: ['Cricket', 'Volleyball', 'Kabaddi', 'Athletics'],
     infrastructureScore: 85,
     phone: '+91 821 2412345',
-    email: 'mysore.kv@gov.in',
-    website: 'mysore.kvs.ac.in',
+    email: 'info@ABCmysore.ac.in',
+    website: 'www.ABCmysore.ac.in',
     management: {
       type: 'CBSE Affiliated',
       affiliationNumber: '190012',
       principal: 'Mr. S. K. Prasad',
-      establishedBy: 'Kendriya Vidyalaya Sangathan',
+      establishedBy: 'ABC Group',
     },
     syllabus: {
       board: 'CBSE',

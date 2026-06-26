@@ -59,7 +59,7 @@ export function Footer() {
 
           {/* Our Services */}
           <div>
-            <h3 className="text-slate-800 font-semibold text-base mb-4">Our Services</h3>
+            <h3 className="text-slate-800 font-semibold text-base mb-4">Directory Services</h3>
             <ul className="space-y-3 text-sm">
               <li><Link to="/contact" className="text-slate-500 hover:text-amber-600 transition-colors">EdTech Companies</Link></li>
               <li><Link to="/contact" className="text-slate-500 hover:text-amber-600 transition-colors">School ERP Providers</Link></li>
@@ -75,11 +75,7 @@ export function Footer() {
           <div>
             <h3 className="text-slate-800 font-semibold text-base mb-4">Contact Us</h3>
             <ul className="space-y-4 text-sm">
-              <li className="flex items-start space-x-3">
-                <MapPin className="w-5 h-5 text-amber-600 flex-shrink-0 mt-1" />
-                <span className="text-slate-600">Indiranagar, Bangalore, KA, India 560001</span>
-              </li>
-
+             
               <li className="flex items-center space-x-3">
                 <Mail className="w-5 h-5 text-amber-600 flex-shrink-0" />
                 <span className="text-slate-600">info@schoolexpert.in</span>

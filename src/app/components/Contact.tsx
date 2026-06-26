@@ -90,18 +90,6 @@ export function Contact() {
                 </div>
               </div>
 
-              <div className="group bg-card border border-slate-200/60 rounded-2xl p-6 flex items-center space-x-5 shadow-sm hover:shadow-md hover:border-amber-600/30 transition-all duration-300">
-                <div className="w-12 h-12 rounded-xl bg-[#F5EFEB]/60 border border-slate-200/60 flex items-center justify-center flex-shrink-0 transition-colors group-hover:bg-amber-600 group-hover:border-amber-600">
-                  <MapPin className="w-5 h-5 text-amber-600 group-hover:text-white transition-colors" />
-                </div>
-                <div>
-                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">Headquarters</div>
-                  <span className="text-slate-850 font-black">
-                    Indiranagar, Bangalore, KA, India
-                  </span>
-                </div>
-              </div>
-
             </div>
           </div>
 

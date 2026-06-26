@@ -455,12 +455,15 @@ function CreatePostBox({
           <div className="flex-1 bg-slate-50 rounded-xl px-4 py-2.5 text-sm text-slate-400 border border-slate-100 select-none">
             {disabled ? 'Sign in to share your experience or ask a question…' : 'Share your school experience or ask a question…'}
           </div>
-          <button
-            disabled={disabled}
-            className="p-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <PenSquare className="w-4 h-4" />
-          </button>
+          <div className="flex flex-col items-center gap-1 flex-shrink-0">
+            <button
+              disabled={disabled}
+              className="p-2.5 rounded-full bg-amber-500 hover:bg-amber-600 text-white transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center"
+            >
+              <PenSquare className="w-4 h-4" />
+            </button>
+            <span className="text-[10px] font-bold text-amber-500 select-none">New Post</span>
+          </div>
         </div>
       )}
 

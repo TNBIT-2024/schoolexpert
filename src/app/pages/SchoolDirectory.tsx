@@ -37,7 +37,7 @@ export function SchoolDirectory() {
       <Navbar />
 
       {/* Hero Section */}
-      <div className="pt-32 pb-16 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900 text-white relative overflow-hidden">
+      <div className="pt-32 pb-16 bg-gradient-to-br from-slate-500 via-slate-500 to-slate-800 text-white relative overflow-hidden">
         <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djEyaC0xMlYzNGgxMnptMC0xNnYxMmgtMTJWMThoMTJ6bS0xNiAxNnYxMkg4VjM0aDEyem0wLTE2djEySDhWMThoMTJ6bTE2LTE2djEyaC0xMlYyaDEyem0tMTYgMHYxMkg4VjJoMTJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-30" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
@@ -56,28 +56,18 @@ export function SchoolDirectory() {
               SchoolExpert brings reviews, quantified infrastructure scores, so families can compare institutions with clarity.
             </p>
 
-            {/* Stats */}
-            <div className="grid grid-cols-3 gap-8 max-w-2xl mx-auto mb-8">
-              <div>
-                <div className="text-3xl text-amber-400 mb-1">48</div>
-                <div className="text-sm text-slate-400">schools verified</div>
-              </div>
-              <div>
-                <div className="text-3xl text-amber-400 mb-1">Daily</div>
-                <div className="text-sm text-slate-400">On-call advisors</div>
-              </div>
-              <div>
-                <div className="text-3xl text-amber-400 mb-1">3+</div>
-                <div className="text-sm text-slate-400">CBSE | ICSE | State</div>
-              </div>
-            </div>
+            
 
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
               <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-slate-900 px-8 py-6 text-lg">
+                <Link to="/get-started">
                 Get verified access
+                </Link>
               </Button>
-              <Button size="lg" variant="outline" className="border-2 border-white text-white hover:bg-white/10 px-8 py-6 text-lg">
-                Browse directory
+              <Button size="lg" variant="outline" className="border-2 border-slate-200 text-slate-900 hover:bg-white/10 px-8 py-6 text-lg">
+                <Link to="/community">
+                Community
+                </Link>
               </Button>
             </div>
           </motion.div>

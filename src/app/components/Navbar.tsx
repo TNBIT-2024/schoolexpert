@@ -293,7 +293,7 @@ export function Navbar() {
 
               {/* About Us */}
               <Link
-                to="/AboutUs"
+                to="/meet-the-founder"
                 onClick={() => setActiveTab('about')}
                 className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 ${activeTab === 'about'
                     ? 'bg-amber-600 text-white shadow-sm'

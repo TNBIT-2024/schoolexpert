@@ -43,7 +43,7 @@ export function MeetFounder() {
               About Us
             </span>
             <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
-              Meet the Founders
+              Meet the Minds Behind <text className="text-amber-600"> The School Expert </text>
             </h1>
             <div className="w-16 h-1 bg-amber-500 mx-auto rounded-full" />
           </motion.div>
@@ -98,7 +98,7 @@ export function MeetFounder() {
                   Shalini Santhosh
                 </h2>
                 <p className="text-amber-700 text-sm md:text-base font-extrabold tracking-wide uppercase text-left">
-                  Founder & CEO, The School Expert™ · Trained Montessorian
+                  Founder & CEO, The School Expert™
                 </p>
               </div>
 

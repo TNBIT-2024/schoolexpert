@@ -2,7 +2,7 @@ import React, { useState, FormEvent } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router';
 import { Eye, EyeOff, User as UserIcon, Mail, Phone, MapPin, Lock, ArrowRight, ArrowLeft, Users, Building, Briefcase, GraduationCap } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-const logoImg = '/schoolexpert_logo.png';
+const logoImg = '/logo svg.svg';
 
 // --- HELPER COMPONENTS (ICONS) ---
 
@@ -76,20 +76,6 @@ export function GetStarted() {
     }
   };
 
-  const handleGoogleRegister = async () => {
-    setError('');
-    setLoading(true);
-    try {
-      await signInWithGoogle();
-      navigate('/');
-    } catch (err: any) {
-      console.error(err);
-      setError(err.message || 'Google registration failed.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
   return (
     <div className="h-[100dvh] flex flex-col md:flex-row font-geist w-[100dvw] bg-slate-50 dark:bg-zinc-950 overflow-hidden">
       {/* Left column: registration form steps */}
@@ -99,7 +85,7 @@ export function GetStarted() {
             {/* Logo and Progress Bar */}
             <div className="animate-element animate-delay-100 flex items-center justify-between">
               <Link to="/">
-                <img src={logoImg} alt="The School Expert" className="h-16 md:h-20 w-auto object-contain transition-transform duration-300 hover:scale-105" style={{ filter: 'url(#remove-white)' }} />
+                <img src={logoImg} alt="The School Expert" className="h-20 md:h-30 w-auto object-contain transition-transform duration-300 hover:scale-105" style={{ filter: 'url(#remove-white)' }} />
               </Link>
               <div className="text-xs font-semibold text-slate-400 uppercase tracking-widest">
                 Step {step} of 3
@@ -113,7 +99,7 @@ export function GetStarted() {
                   Choose your profile
                 </h1>
                 <p className="animate-element animate-delay-300 text-slate-500 dark:text-slate-400">
-                  Select how you will be using SchoolExpert to customize your experience.
+                  Select how you will be using The School Expert to customize your experience.
                 </p>
               </>
             )}
@@ -422,25 +408,6 @@ export function GetStarted() {
             {/* Step 3: Create Password & Finalize */}
             {step === 3 && (
               <form onSubmit={handleRegister} className="space-y-4">
-                {/* Google Quick Sign-Up */}
-                <div className="space-y-3 mb-4">
-                  <button
-                    type="button"
-                    onClick={handleGoogleRegister}
-                    disabled={loading}
-                    className="w-full flex items-center justify-center gap-3 border border-slate-200 bg-white/70 rounded-2xl py-4 font-semibold text-slate-700 hover:bg-slate-50 active:scale-[0.99] transition-all shadow-sm"
-                  >
-                    <GoogleIcon />
-                    Sign up with Google
-                  </button>
-                </div>
-
-                <div className="relative flex items-center justify-center py-2">
-                  <span className="w-full border-t border-slate-200"></span>
-                  <span className="px-4 text-xs font-semibold text-slate-400 bg-slate-50 uppercase tracking-wider absolute">
-                    Or set password
-                  </span>
-                </div>
 
                 <div>
                   <label className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 block">Password</label>

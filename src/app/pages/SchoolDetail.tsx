@@ -18,7 +18,7 @@ export function SchoolDetail() {
 
   const school = {
     id: 1,
-    name: 'Delhi Public School',
+    name: 'ABC Public School',
     location: 'Mysore, Karnataka',
     address: '123 Education Street, Vijayanagar, Mysore - 570017, Karnataka, India',
     board: 'CBSE',
@@ -29,14 +29,14 @@ export function SchoolDetail() {
     verified: true,
     infrastructureScore: 92,
     phone: '+91 821 2345678',
-    email: 'info@dpsmysore.edu.in',
-    website: 'www.dpsmysore.edu.in',
+    email: 'info@abcmysore.edu.in',
+    website: 'www.abcmysore.edu.in',
 
     management: {
       type: 'CBSE Affiliated',
       affiliationNumber: '123456',
       principal: 'Dr. Rajesh Kumar',
-      establishedBy: 'Delhi Public School Society',
+      establishedBy: 'ABC School Society',
     },
 
     syllabus: {
@@ -95,7 +95,7 @@ export function SchoolDetail() {
       <Navbar />
 
       {/* Hero Section */}
-      <div className="pt-24 pb-8 bg-gradient-to-br from-slate-900 via-slate-800 to-slate-900">
+      <div className="pt-24 pb-8 bg-gradient-to-br from-slate-500 via-slate-600 to-slate-900">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <Link to="/schools" className="inline-flex items-center space-x-2 text-slate-300 hover:text-white mb-6 transition-colors">
             <ChevronLeft className="w-5 h-5" />
