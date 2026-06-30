@@ -172,8 +172,9 @@ CREATE TABLE IF NOT EXISTS public.profiles (
     email TEXT,
     phone TEXT,
     city TEXT,
-    user_type TEXT,
-    service_type TEXT,
+    user_type TEXT CHECK (user_type IN ('parent', 'school', 'service', 'educator', 'special_educator')),
+    service_type TEXT CHECK (service_type IS NULL OR service_type IN ('EdTech Companies', 'School ERP Providers', 'Educational Publishers', 'Teacher Training Companies', 'Skill Development Providers', 'International Education Consultants', 'Infrastructure / School Equipment Vendors', 'Career Coaching & Counselling', 'Mental health professionals', 'Individual course providers')),
+    school_type TEXT CHECK (school_type IS NULL OR school_type IN ('Regular School', 'Alternative School', 'Preschool/Nursery School', 'Special School')),
     avatar_url TEXT,
     updated_at TIMESTAMPTZ NOT NULL DEFAULT now()
 );
@@ -185,7 +186,18 @@ ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS phone TEXT;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS city TEXT;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS user_type TEXT;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS service_type TEXT;
+ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS school_type TEXT;
 ALTER TABLE public.profiles ADD COLUMN IF NOT EXISTS avatar_url TEXT;
+
+-- Safely add check constraints to ensure data integrity
+ALTER TABLE public.profiles DROP CONSTRAINT IF EXISTS profiles_user_type_check;
+ALTER TABLE public.profiles ADD CONSTRAINT profiles_user_type_check CHECK (user_type IN ('parent', 'school', 'service', 'educator', 'special_educator'));
+
+ALTER TABLE public.profiles DROP CONSTRAINT IF EXISTS profiles_school_type_check;
+ALTER TABLE public.profiles ADD CONSTRAINT profiles_school_type_check CHECK (school_type IS NULL OR school_type IN ('Regular School', 'Alternative School', 'Preschool/Nursery School', 'Special School'));
+
+ALTER TABLE public.profiles DROP CONSTRAINT IF EXISTS profiles_service_type_check;
+ALTER TABLE public.profiles ADD CONSTRAINT profiles_service_type_check CHECK (service_type IS NULL OR service_type IN ('EdTech Companies', 'School ERP Providers', 'Educational Publishers', 'Teacher Training Companies', 'Skill Development Providers', 'International Education Consultants', 'Infrastructure / School Equipment Vendors', 'Career Coaching & Counselling', 'Mental health professionals', 'Individual course providers'));
 
 -- Drop NOT NULL constraint on email column if it exists to prevent sign-up blocks
 ALTER TABLE public.profiles ALTER COLUMN email DROP NOT NULL;
@@ -214,6 +226,7 @@ BEGIN
     city, 
     user_type, 
     service_type, 
+    school_type,
     avatar_url
   )
   VALUES (
@@ -224,6 +237,7 @@ BEGIN
     new.raw_user_meta_data->>'city',
     new.raw_user_meta_data->>'user_type',
     new.raw_user_meta_data->>'service_type',
+    new.raw_user_meta_data->>'school_type',
     new.raw_user_meta_data->>'avatar_url'
   )
   ON CONFLICT (id) DO UPDATE SET
@@ -233,6 +247,7 @@ BEGIN
     city = excluded.city,
     user_type = excluded.user_type,
     service_type = excluded.service_type,
+    school_type = excluded.school_type,
     avatar_url = excluded.avatar_url;
   RETURN new;
 END;
@@ -258,6 +273,7 @@ SELECT
   u.email,
   p.phone,
   p.city,
+  p.school_type,
   p.avatar_url,
   u.created_at
 FROM public.profiles p

@@ -350,7 +350,9 @@ export function GetStarted() {
                 </div>
 
                 <div>
-                  <label className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 block">Phone Number</label>
+                  <label className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 block">
+                    Phone Number {userType === 'parent' && <span className="text-xs text-slate-400 dark:text-slate-500 font-normal ml-1">(Optional)</span>}
+                  </label>
                   <GlassInputWrapper>
                     <div className="relative">
                       <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -360,7 +362,7 @@ export function GetStarted() {
                         onChange={(e) => updateFormData('phone', e.target.value)}
                         placeholder="+91 98765 43210"
                         className="w-full bg-transparent text-sm p-4 pl-11 rounded-2xl focus:outline-none text-slate-800 dark:text-slate-100"
-                        required
+                        required={userType !== 'parent'}
                       />
                     </div>
                   </GlassInputWrapper>
@@ -395,7 +397,7 @@ export function GetStarted() {
                   <button
                     type="button"
                     onClick={() => setStep(3)}
-                    disabled={!formData.name || !formData.email || !formData.phone || !formData.city}
+                    disabled={!formData.name || !formData.email || (userType !== 'parent' && !formData.phone) || !formData.city}
                     className="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-slate-900 text-white py-4 font-semibold hover:bg-slate-800 active:scale-[0.99] transition-all disabled:opacity-50 disabled:pointer-events-none shadow-md"
                   >
                     Continue

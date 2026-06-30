@@ -52,6 +52,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           city: metadata.city,
           user_type: metadata.userType,
           service_type: metadata.serviceType,
+          school_type: metadata.schoolType,
         } : undefined
       }
     });
