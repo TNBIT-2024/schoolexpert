@@ -78,7 +78,7 @@ export function CTA() {
               </div>
               <div className="flex items-center space-x-2">
                 <CheckCircle className="w-4 h-4 text-slate-400" />
-                <span>Infrastructure scores</span>
+                <span>Verified Schools</span>
               </div>
             </div>
           </div>
