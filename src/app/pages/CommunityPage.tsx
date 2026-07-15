@@ -171,6 +171,7 @@ function PostCard({
   const [comment, setComment]               = useState('');
   const [localComments, setLocalComments]   = useState<Comment[]>(post.comments);
   const [showDropdown, setShowDropdown]     = useState(false);
+  const [isExpanded, setIsExpanded]         = useState(false);
   const dropdownRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
@@ -290,7 +291,31 @@ function PostCard({
 
         {/* Title + Content */}
         <h3 className="font-bold text-slate-900 text-sm mb-1.5 leading-snug">{post.title}</h3>
-        <p className="text-slate-600 text-sm leading-relaxed line-clamp-3">{post.content}</p>
+        <p className="text-slate-600 text-sm leading-relaxed">
+          {post.content.length > 200 && !isExpanded ? (
+            <>
+              {post.content.slice(0, 200)}...
+              <button
+                onClick={() => setIsExpanded(true)}
+                className="text-amber-500 hover:text-amber-600 font-bold ml-1 hover:underline focus:outline-none cursor-pointer"
+              >
+                See more
+              </button>
+            </>
+          ) : (
+            <>
+              {post.content}
+              {post.content.length > 200 && (
+                <button
+                  onClick={() => setIsExpanded(false)}
+                  className="text-amber-500 hover:text-amber-600 font-bold ml-1 hover:underline focus:outline-none cursor-pointer"
+                >
+                  See less
+                </button>
+              )}
+            </>
+          )}
+        </p>
 
         {/* Divider */}
         <div className="border-t border-slate-100 my-3" />
@@ -444,12 +469,17 @@ function CreatePostBox({
           <div className="flex-1 bg-slate-50 rounded-xl px-4 py-2.5 text-sm text-slate-400 border border-slate-100 select-none">
             {disabled ? 'Sign in to share your experience or ask a question…' : 'Share your school experience or ask a question…'}
           </div>
-          <button
-            disabled={disabled}
-            className="p-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed"
-          >
-            <PenSquare className="w-4 h-4" />
-          </button>
+          <div className="flex flex-col items-center gap-1">
+            <button
+              disabled={disabled}
+              className="p-2 rounded-xl bg-amber-500 hover:bg-amber-600 text-white transition-colors shadow-sm disabled:opacity-50 disabled:cursor-not-allowed cursor-pointer"
+            >
+              <PenSquare className="w-4 h-4" />
+            </button>
+            <span className="text-[10px] font-bold text-slate-500 uppercase tracking-wider select-none leading-none">
+              New Post
+            </span>
+          </div>
         </div>
       )}
 

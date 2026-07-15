@@ -84,7 +84,13 @@ export function GetStarted() {
         formData.verificationDocName
       );
     }
-    return !!(formData.name && formData.email && formData.phone && formData.city);
+    const isPhoneRequired = userType !== 'parent';
+    return !!(
+      formData.name &&
+      formData.email &&
+      (!isPhoneRequired || formData.phone) &&
+      formData.city
+    );
   };
 
   const handleFileUpload = async (file: File, type: 'video' | 'document') => {
@@ -740,7 +746,9 @@ export function GetStarted() {
                     </div>
 
                     <div>
-                      <label className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 block">Phone Number</label>
+                      <label className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 block">
+                        Phone Number {userType === 'parent' && <span className="text-xs text-slate-400 dark:text-slate-500 font-normal ml-1">(Optional)</span>}
+                      </label>
                       <GlassInputWrapper>
                         <div className="relative">
                           <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
@@ -750,7 +758,7 @@ export function GetStarted() {
                             onChange={(e) => updateFormData('phone', e.target.value)}
                             placeholder="+91 98765 43210"
                             className="w-full bg-transparent text-sm p-4 pl-11 rounded-2xl focus:outline-none text-slate-800 dark:text-slate-100"
-                            required
+                            required={userType !== 'parent'}
                           />
                         </div>
                       </GlassInputWrapper>
