@@ -42,6 +42,19 @@ const servicesList = [
   { name: 'Individual course providers', icon: Award },
 ];
 
+const serviceSlugs = [
+  'edtech-companies',
+  'school-erp-providers',
+  'educational-publishers',
+  'teacher-training-companies',
+  'skill-development-providers',
+  'international-education-consultants',
+  'infrastructure-vendors',
+  'career-coaching',
+  'mental-health-professionals',
+  'individual-course-providers'
+];
+
 const othersList = [
   { name: 'Events', icon: Calendar },
   { name: 'Newsletters', icon: Mail },
@@ -190,6 +203,11 @@ export function Navbar() {
     return () => window.removeEventListener('scroll', handleScroll);
   }, []);
 
+  const isDarkNavbar = false;
+  const inactiveLinkClass = isDarkNavbar
+    ? 'text-slate-200 hover:text-amber-400'
+    : 'text-slate-700 hover:bg-amber-600/10 hover:text-amber-700';
+
   return (
     <>
       {/* Announcement Banner */}
@@ -264,20 +282,32 @@ export function Navbar() {
         style={{ top: showBanner ? '38px' : '0px' }}
       >
         <div className="max-w-[1600px] w-full mx-auto px-6 md:px-12 lg:px-16">
-          <div className="flex items-center justify-between h-24">
+          <div className="flex items-center justify-between h-24 md:h-28">
             {/* Logo */}
             <div className="flex-1 flex justify-start">
               <Link to="/" className="flex items-center">
                 <img
-                  src={logoImg}
+                  src={isDarkNavbar ? '/schoolexpert_logo_white.png' : logoImg}
                   alt="The School Expert"
-                  className="h-24 md:h-32 w-auto object-contain transition-transform duration-300 hover:scale-105"
+                  className="h-28 md:h-36 w-auto object-contain transition-transform duration-300 hover:scale-105 py-2"
                 />
               </Link>
             </div>
 
             {/* Desktop Navigation */}
-            <div className="hidden xl:flex flex-none items-center bg-[#FAF6F0]/65 border border-slate-200/40 rounded-full p-1 backdrop-blur-md mx-4 shadow-sm relative">
+            <div className={`hidden xl:flex flex-none items-center rounded-full p-1 mx-4 relative transition-all duration-300 ${isDarkNavbar ? '' : 'bg-[#FAF6F0]/65 border border-slate-200/40 backdrop-blur-md shadow-sm'}`}>
+
+              {/* About Us */}
+              <Link
+                to="/AboutUs"
+                onClick={() => setActiveTab('about')}
+                className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 ${activeTab === 'about'
+                    ? 'bg-amber-600 text-white shadow-sm'
+                    : inactiveLinkClass
+                  }`}
+              >
+                About Us
+              </Link>
 
               {/* Features */}
               <Link
@@ -285,22 +315,10 @@ export function Navbar() {
                 onClick={() => setActiveTab('features')}
                 className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 ${activeTab === 'features'
                     ? 'bg-amber-600 text-white shadow-sm'
-                    : 'text-slate-700 hover:bg-amber-600/10 hover:text-amber-700'
+                    : inactiveLinkClass
                   }`}
               >
                 Features
-              </Link>
-
-              {/* About Us */}
-              <Link
-                to="/meet-the-founder"
-                onClick={() => setActiveTab('about')}
-                className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 ${activeTab === 'about'
-                    ? 'bg-amber-600 text-white shadow-sm'
-                    : 'text-slate-700 hover:bg-amber-600/10 hover:text-amber-700'
-                  }`}
-              >
-                About Us
               </Link>
 
 
@@ -313,7 +331,7 @@ export function Navbar() {
                 <button
                   className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 flex items-center gap-1 cursor-pointer ${activeTab.startsWith('directory-')
                       ? 'bg-amber-600 text-white shadow-sm'
-                      : 'text-slate-700 hover:bg-amber-600/10 hover:text-amber-700'
+                      : inactiveLinkClass
                     }`}
                 >
                   Directory Services
@@ -334,7 +352,7 @@ export function Navbar() {
                         return (
                           <Link
                             key={idx}
-                            to="/contact"
+                            to={`/directory/${serviceSlugs[idx]}`}
                             onClick={() => {
                               setActiveTab(`directory-${idx}`);
                               setIsDirectoryOpen(false);
@@ -360,7 +378,7 @@ export function Navbar() {
                 <button
                   className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 flex items-center gap-1 cursor-pointer ${activeTab.startsWith('others-')
                       ? 'bg-amber-600 text-white shadow-sm'
-                      : 'text-slate-700 hover:bg-amber-600/10 hover:text-amber-700'
+                      : inactiveLinkClass
                     }`}
                 >
                   Others
@@ -378,19 +396,37 @@ export function Navbar() {
                     >
                       {othersList.map((item, idx) => {
                         const Icon = item.icon;
+                        if (item.name === 'Events') {
+                          return (
+                            <Link
+                              key={idx}
+                              to="/events"
+                              onClick={() => {
+                                setActiveTab('others-events');
+                                setIsOthersOpen(false);
+                              }}
+                              className="flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-amber-600/10 hover:text-amber-700 transition-all duration-200"
+                            >
+                              <div className="flex items-center gap-3">
+                                <Icon className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                                <span>{item.name}</span>
+                              </div>
+                            </Link>
+                          );
+                        }
                         return (
-                          <Link
+                          <div
                             key={idx}
-                            to="/contact"
-                            onClick={() => {
-                              setActiveTab(`others-${idx}`);
-                              setIsOthersOpen(false);
-                            }}
-                            className="flex items-center gap-3 px-4 py-2.5 rounded-xl text-xs font-bold text-slate-700 hover:bg-amber-600/10 hover:text-amber-700 transition-all duration-200"
+                            className="flex items-center justify-between px-4 py-2.5 rounded-xl text-xs font-bold text-slate-400 bg-slate-50/30 cursor-not-allowed select-none transition-all duration-200"
                           >
-                            <Icon className="w-4 h-4 text-amber-600 flex-shrink-0" />
-                            <span>{item.name}</span>
-                          </Link>
+                            <div className="flex items-center gap-3">
+                              <Icon className="w-4 h-4 text-slate-400 flex-shrink-0" />
+                              <span>{item.name}</span>
+                            </div>
+                            <span className="bg-amber-100 text-amber-700 text-[8px] px-1.5 py-0.5 rounded-md font-extrabold uppercase tracking-wide">
+                              Soon
+                            </span>
+                          </div>
                         );
                       })}
                     </motion.div>
@@ -404,7 +440,7 @@ export function Navbar() {
                 onClick={() => setActiveTab('community')}
                 className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 ${activeTab === 'community'
                     ? 'bg-amber-600 text-white shadow-sm'
-                    : 'text-slate-700 hover:bg-amber-600/10 hover:text-amber-700'
+                    : inactiveLinkClass
                   }`}
               >
                 Community
@@ -418,7 +454,7 @@ export function Navbar() {
                 onClick={() => setActiveTab('contact')}
                 className={`px-5 py-2.5 rounded-full text-xs font-bold uppercase tracking-wider transition-all duration-300 ${activeTab === 'contact'
                     ? 'bg-amber-600 text-white shadow-sm'
-                    : 'text-slate-700 hover:bg-amber-600/10 hover:text-amber-700'
+                    : inactiveLinkClass
                   }`}
               >
                 Contact
@@ -524,7 +560,7 @@ export function Navbar() {
               ) : (
                 <>
                   <Link to="/signin">
-                    <Button variant="ghost" className="text-gray-700 hover:text-amber-600 font-bold">
+                    <Button variant="ghost" className={`font-bold transition-colors ${isDarkNavbar ? 'text-slate-200 hover:text-white' : 'text-gray-700 hover:text-amber-600'}`}>
                       Sign In
                     </Button>
                   </Link>
@@ -540,7 +576,7 @@ export function Navbar() {
             {/* Mobile Menu Button */}
             <div className="xl:hidden flex-1 flex justify-end">
               <button
-                className="text-gray-700 p-2 cursor-pointer"
+                className={`p-2 cursor-pointer transition-colors ${isDarkNavbar ? 'text-white' : 'text-gray-700'}`}
                 onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
               >
                 {isMobileMenuOpen ? <X className="w-8 h-8" /> : <Menu className="w-8 h-8" />}
@@ -553,18 +589,18 @@ export function Navbar() {
             <div className="xl:hidden py-6 border-t border-gray-200 max-h-[80vh] overflow-y-auto">
               <div className="flex flex-col space-y-4 px-2">
                 <Link
-                  to="/features"
-                  className="text-gray-700 hover:text-amber-600 font-bold text-sm transition-colors"
-                  onClick={() => setIsMobileMenuOpen(false)}
-                >
-                  Features
-                </Link>
-                <Link
                   to="/AboutUs"
                   className="text-gray-700 hover:text-amber-600 font-bold text-sm transition-colors"
                   onClick={() => setIsMobileMenuOpen(false)}
                 >
                   About Us
+                </Link>
+                <Link
+                  to="/features"
+                  className="text-gray-700 hover:text-amber-600 font-bold text-sm transition-colors"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                >
+                  Features
                 </Link>
 
 
@@ -582,7 +618,7 @@ export function Navbar() {
                       {servicesList.map((service, idx) => (
                         <Link
                           key={idx}
-                          to="/contact"
+                          to={`/directory/${serviceSlugs[idx]}`}
                           className="block py-1 text-gray-600 hover:text-amber-600 text-xs font-semibold"
                           onClick={() => setIsMobileMenuOpen(false)}
                         >
@@ -604,16 +640,40 @@ export function Navbar() {
                   </button>
                   {isMobileOthersOpen && (
                     <div className="pl-4 mt-2 space-y-2 border-l-2 border-amber-600/20">
-                      {othersList.map((item, idx) => (
-                        <Link
-                          key={idx}
-                          to="/contact"
-                          className="block py-1 text-gray-600 hover:text-amber-600 text-xs font-semibold"
-                          onClick={() => setIsMobileMenuOpen(false)}
-                        >
-                          {item.name}
-                        </Link>
-                      ))}
+                      {othersList.map((item, idx) => {
+                        const Icon = item.icon;
+                        if (item.name === 'Events') {
+                          return (
+                            <Link
+                              key={idx}
+                              to="/events"
+                              onClick={() => {
+                                setIsMobileMenuOpen(false);
+                              }}
+                              className="flex items-center justify-between py-1.5 text-gray-700 hover:text-amber-600 text-xs font-bold transition-all duration-200"
+                            >
+                              <div className="flex items-center gap-2">
+                                <Icon className="w-4 h-4 text-amber-600 flex-shrink-0" />
+                                <span>{item.name}</span>
+                              </div>
+                            </Link>
+                          );
+                        }
+                        return (
+                          <div
+                            key={idx}
+                            className="flex items-center justify-between py-1.5 text-gray-400 text-xs font-bold select-none cursor-not-allowed"
+                          >
+                            <div className="flex items-center gap-2">
+                              <Icon className="w-4 h-4 text-gray-400 flex-shrink-0" />
+                              <span>{item.name}</span>
+                            </div>
+                            <span className="bg-amber-100 text-amber-700 text-[8px] px-1.5 py-0.5 rounded-md font-extrabold uppercase tracking-wide">
+                              Soon
+                            </span>
+                          </div>
+                        );
+                      })}
                     </div>
                   )}
                 </div>

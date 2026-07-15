@@ -24,14 +24,17 @@ export function CTA() {
             </h2>
 
             <p className="text-lg text-slate-600 mb-8 max-w-2xl leading-relaxed">
-              Get verified access to parent reviews for informed school decisions.
+              Get verified access to infrastructure scores, parent reviews, and live consultation support for informed school decisions.
             </p>
 
             {/* Benefits Grid */}
             <div className="grid md:grid-cols-2 gap-4 mb-10">
               {[
                 'Verified parent reviews',
-                'Verified Schools',
+                'Quantified infrastructure scores',
+                'Live consultation support',
+                'Compare schools with clarity',
+                '48 schools verified',
                 'CBSE | ICSE | State boards'
               ].map((benefit, index) => (
                 <motion.div
@@ -74,11 +77,15 @@ export function CTA() {
             <div className="mt-8 flex flex-wrap items-center gap-6 text-slate-500 text-xs font-semibold tracking-wide uppercase">
               <div className="flex items-center space-x-2">
                 <CheckCircle className="w-4 h-4 text-slate-400" />
+                <span>Daily on-call advisors</span>
+              </div>
+              <div className="flex items-center space-x-2">
+                <CheckCircle className="w-4 h-4 text-slate-400" />
                 <span>Verified reviews</span>
               </div>
               <div className="flex items-center space-x-2">
                 <CheckCircle className="w-4 h-4 text-slate-400" />
-                <span>Verified Schools</span>
+                <span>Infrastructure scores</span>
               </div>
             </div>
           </div>

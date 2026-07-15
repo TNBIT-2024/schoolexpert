@@ -11,6 +11,8 @@ import { MeetFounder } from './pages/MeetFounder';
 import { FeaturesPage } from './pages/FeaturesPage';
 import { AboutPage } from './pages/AboutPage';
 import { ContactPage } from './pages/ContactPage';
+import { ServiceDirectoryPage } from './pages/ServiceDirectoryPage';
+import { EventsPage } from './pages/EventsPage';
 
 export const router = createBrowserRouter([
   {
@@ -29,6 +31,8 @@ export const router = createBrowserRouter([
       { path: 'AboutUs', Component: AboutPage },
       { path: 'about', Component: AboutPage },
       { path: 'contact', Component: ContactPage },
+      { path: 'events', Component: EventsPage },
+      { path: 'directory/:type', Component: ServiceDirectoryPage },
     ],
   },
 ]);

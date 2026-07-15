@@ -52,7 +52,15 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
           city: metadata.city,
           user_type: metadata.userType,
           service_type: metadata.serviceType,
-          school_type: metadata.schoolType,
+          // Extra course provider fields
+          academy_name: metadata.academyName,
+          skills_offered: metadata.skillsOffered,
+          mode: metadata.mode,
+          complete_address: metadata.completeAddress,
+          classes_per_week: metadata.classesPerWeek,
+          fee_details: metadata.feeDetails,
+          sample_video_url: metadata.sampleVideoUrl,
+          verification_doc_name: metadata.verificationDocName,
         } : undefined
       }
     });

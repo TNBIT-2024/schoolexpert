@@ -43,7 +43,7 @@ export function MeetFounder() {
               About Us
             </span>
             <h1 className="text-4xl md:text-5xl font-black text-slate-900 tracking-tight leading-tight">
-              Meet the Minds Behind <text className="text-amber-600"> The School Expert </text>
+              Meet the Founders
             </h1>
             <div className="w-16 h-1 bg-amber-500 mx-auto rounded-full" />
           </motion.div>
@@ -98,7 +98,7 @@ export function MeetFounder() {
                   Shalini Santhosh
                 </h2>
                 <p className="text-amber-700 text-sm md:text-base font-extrabold tracking-wide uppercase text-left">
-                  Founder & CEO, The School Expert™
+                  Founder & CEO, The School Expert™ · Trained Montessorian
                 </p>
               </div>
 
@@ -131,24 +131,26 @@ export function MeetFounder() {
           </div>
 
           {/* Vision & Mission Section */}
-          <div className="grid md:grid-cols-2 gap-8 border-t border-slate-200/50 pt-16 mb-24">
+          <div className="grid md:grid-cols-2 gap-8 border-t border-slate-200/60 pt-16 mb-24">
             {/* Vision */}
             <motion.div
-              initial={{ opacity: 0, x: -25 }}
+              initial={{ opacity: 0, x: -20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="bg-gradient-to-br from-amber-500/10 to-amber-600/5 border border-amber-500/20 rounded-[2rem] p-8 md:p-10 flex gap-6 relative overflow-hidden group hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+              transition={{ duration: 0.55 }}
+              className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-[2rem] p-8 md:p-10 flex flex-col sm:flex-row gap-6 relative overflow-hidden group hover:shadow-md hover:border-amber-500/30 transition-all duration-300"
             >
-              <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-amber-500/5 -translate-y-10 translate-x-10 group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
-              <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center text-amber-700">
-                <Compass className="w-6 h-6 stroke-[2.2]" />
+              <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-amber-500/10 border border-amber-500/15 flex items-center justify-center text-amber-700">
+                <Compass className="w-5 h-5 stroke-[2.2]" />
               </div>
               <div className="space-y-3">
-                <h3 className="text-2xl font-black text-slate-900 tracking-tight">
-                  Vision
-                </h3>
-                <p className="text-slate-700 text-sm md:text-base leading-relaxed font-semibold text-justify">
+                <div className="space-y-1">
+                  <span className="text-[9px] font-black text-amber-700 uppercase tracking-widest block">Our Horizon</span>
+                  <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
+                    Vision
+                  </h3>
+                </div>
+                <p className="text-slate-650 dark:text-slate-400 text-sm leading-relaxed font-semibold">
                   To become the most trusted education discovery and engagement platform for parents and families.
                 </p>
               </div>
@@ -156,21 +158,23 @@ export function MeetFounder() {
 
             {/* Mission */}
             <motion.div
-              initial={{ opacity: 0, x: 25 }}
+              initial={{ opacity: 0, x: 20 }}
               whileInView={{ opacity: 1, x: 0 }}
               viewport={{ once: true }}
-              transition={{ duration: 0.6 }}
-              className="bg-gradient-to-br from-rose-500/10 to-rose-600/5 border border-rose-500/20 rounded-[2rem] p-8 md:p-10 flex gap-6 relative overflow-hidden group hover:shadow-lg hover:-translate-y-1 transition-all duration-300"
+              transition={{ duration: 0.55 }}
+              className="bg-white dark:bg-zinc-900 border border-slate-200 dark:border-zinc-800 rounded-[2rem] p-8 md:p-10 flex flex-col sm:flex-row gap-6 relative overflow-hidden group hover:shadow-md hover:border-rose-500/30 transition-all duration-300"
             >
-              <div className="absolute top-0 right-0 w-32 h-32 rounded-full bg-rose-500/5 -translate-y-10 translate-x-10 group-hover:scale-125 transition-transform duration-500 pointer-events-none" />
-              <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-rose-500/10 border border-rose-500/20 flex items-center justify-center text-rose-600">
-                <Target className="w-6 h-6 stroke-[2.2]" />
+              <div className="flex-shrink-0 w-12 h-12 rounded-2xl bg-rose-500/10 border border-rose-500/15 flex items-center justify-center text-rose-700">
+                <Target className="w-5 h-5 stroke-[2.2]" />
               </div>
               <div className="space-y-3">
-                <h3 className="text-2xl font-black text-slate-900 tracking-tight">
-                  Mission
-                </h3>
-                <p className="text-slate-700 text-sm md:text-base leading-relaxed font-semibold text-justify">
+                <div className="space-y-1">
+                  <span className="text-[9px] font-black text-rose-700 uppercase tracking-widest block">Our Commitment</span>
+                  <h3 className="text-2xl font-black text-slate-900 dark:text-slate-100 tracking-tight">
+                    Mission
+                  </h3>
+                </div>
+                <p className="text-slate-650 dark:text-slate-400 text-sm leading-relaxed font-semibold">
                   To empower parents with reliable information, authentic community insights, and meaningful educational connections, enabling informed decisions and better educational outcomes for every child.
                 </p>
               </div>

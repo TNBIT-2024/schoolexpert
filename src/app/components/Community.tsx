@@ -1,6 +1,5 @@
 import { motion } from 'motion/react';
 import { Button } from './ui/button';
-import { Link } from 'react-router';
 
 export function Community() {
   return (
@@ -38,20 +37,14 @@ export function Community() {
               size="lg"
               className="bg-amber-500 text-slate-950 hover:bg-amber-600 text-base font-semibold px-8 py-4 shadow-md rounded-xl transition-all duration-200"
             >
-              <Link to="/get-started">
               Join the Community
-              </Link>
-              
             </Button>
             <Button
               size="lg"
               variant="outline"
               className="border-2 border-slate-200 text-slate-700 hover:text-slate-950 hover:border-slate-800 hover:bg-slate-50 text-base font-semibold px-8 py-4 rounded-xl transition-all duration-200"
             >
-              <Link to="/community">
               Browse Discussions
-              </Link>
-              
             </Button>
           </motion.div>
         </div>

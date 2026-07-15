@@ -6,7 +6,15 @@ import { Button } from '../components/ui/button';
 import { Navbar } from '../components/Navbar';
 import { Footer } from '../components/Footer';
 
-const boards = ['All', 'CBSE', 'ICSE', 'State Board'];
+const boards = [
+  { name: 'All', label: 'All Boards', desc: 'All Curriculums' },
+  { name: 'CBSE', label: 'CBSE', desc: 'Central Board' },
+  { name: 'ICSE', label: 'ICSE', desc: 'Indian Certificate' },
+  { name: 'IB Schools', label: 'IB Schools', desc: 'Baccalaureate' },
+  { name: 'State Board', label: 'State Boards', desc: 'State Level Curriculums' },
+  { name: 'International', label: 'International', desc: 'Global Standards' },
+  { name: 'NIOS', label: 'NIOS', desc: 'Open Schooling' }
+];
 const languages = ['English', 'Hindi', 'Kannada', 'Sanskrit', 'French'];
 const facilities = ['Sports Ground', 'Swimming Pool', 'Library', 'Lab', 'Auditorium'];
 
@@ -32,13 +40,37 @@ export function SchoolDirectory() {
     );
   };
 
+  const filteredSchools = schools.filter(school => {
+    const matchesSearch = school.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
+                          school.location.toLowerCase().includes(searchQuery.toLowerCase());
+    const matchesLocation = location === '' || school.location.toLowerCase().includes(location.toLowerCase());
+    
+    // Check board compatibility
+    const matchesBoard = selectedBoard === 'All' || school.board === selectedBoard;
+    
+    const matchesLanguages = selectedLanguages.length === 0 || 
+                             selectedLanguages.every(lang => school.languages.includes(lang));
+                             
+    const matchesFacilities = selectedFacilities.length === 0 || 
+                              selectedFacilities.every(facility => {
+                                const sportsFacilities = school.facilities?.sports?.facilities || [];
+                                const infraFacilities = Object.values(school.facilities?.infrastructure || {}).flatMap(
+                                  val => Array.isArray(val) ? val : [val]
+                                );
+                                const allFacilities = [...sportsFacilities, ...infraFacilities].map(f => f.toLowerCase());
+                                return allFacilities.some(f => f.includes(facility.toLowerCase()));
+                              });
+
+    return matchesSearch && matchesLocation && matchesBoard && matchesLanguages && matchesFacilities;
+  });
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-slate-50 to-white">
       <Navbar />
 
       {/* Hero Section */}
-      <div className="pt-32 pb-16 bg-gradient-to-br from-slate-500 via-slate-500 to-slate-800 text-white relative overflow-hidden">
-        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiNmZmYiIGZpbGwtb3BhY2l0eT0iMC4wNSI+PHBhdGggZD0iTTM2IDM0djEyaC0xMlYzNGgxMnptMC0xNnYxMmgtMTJWMThoMTJ6bS0xNiAxNnYxMkg4VjM0aDEyem0wLTE2djEySDhWMThoMTJ6bTE2LTE2djEyaC0xMlYyaDEyem0tMTYgMHYxMkg4VjJoMTJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-30" />
+      <div className="pt-32 pb-16 bg-gradient-to-br from-slate-100/80 via-slate-50/80 to-white/80 border-b border-slate-200/50 text-slate-900 relative overflow-hidden">
+        <div className="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHZpZXdCb3g9IjAgMCA2MCA2MCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48ZyBmaWxsPSJub25lIiBmaWxsLXJ1bGU9ImV2ZW5vZGQiPjxnIGZpbGw9IiMxNTEyMTAiIGZpbGwtb3BhY2l0eT0iMC4wMyI+PHBhdGggZD0iTTM2IDM0djEyaC0xMlYzNGgxMnptMC0xNnYxMmgtMTJWMThoMTJ6bS0xNiAxNnYxMkg4VjM0aDEyem0wLTE2djEySDhWMThoMTJ6bTE2LTE2djEyaC0xMlYyaDEyem0tMTYgMHYxMkg4VjIdMTJ6Ii8+PC9nPjwvZz48L3N2Zz4=')] opacity-30" />
 
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
           <motion.div
@@ -49,25 +81,18 @@ export function SchoolDirectory() {
           >
           
 
-            <h1 className="text-5xl mb-6">
-              Find the right school with <span className="text-amber-400">proof, not guesswork</span>
+            <h1 className="text-5xl mb-6 text-slate-900 font-extrabold">
+              Find the right school with <span className="text-amber-600">proof, not guesswork</span>
             </h1>
-            <p className="text-xl text-slate-300 max-w-3xl mx-auto mb-8">
+            <p className="text-xl text-slate-600 max-w-3xl mx-auto mb-8 font-medium">
               SchoolExpert brings reviews, quantified infrastructure scores, so families can compare institutions with clarity.
             </p>
-
-            
-
             <div className="flex flex-col sm:flex-row gap-4 justify-center">
-              <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-slate-900 px-8 py-6 text-lg">
-                <Link to="/get-started">
+              <Button size="lg" className="bg-amber-500 hover:bg-amber-600 text-slate-900 px-8 py-6 text-lg font-bold rounded-2xl shadow-lg hover:shadow-xl transition-all duration-300">
                 Get verified access
-                </Link>
               </Button>
-              <Button size="lg" variant="outline" className="border-2 border-slate-200 text-slate-900 hover:bg-white/10 px-8 py-6 text-lg">
-                <Link to="/community">
-                Community
-                </Link>
+              <Button size="lg" variant="outline" className="border-2 border-slate-300 text-slate-700 hover:bg-slate-50 hover:border-slate-900 px-8 py-6 text-lg font-bold rounded-2xl transition-all duration-300">
+                Browse directory
               </Button>
             </div>
           </motion.div>
@@ -77,54 +102,64 @@ export function SchoolDirectory() {
       {/* Search & Filter Section */}
       <div className="sticky top-20 z-40 bg-white/95 backdrop-blur-lg border-b border-slate-200 shadow-lg">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-          <div className="flex flex-col lg:flex-row gap-4">
-            {/* Search */}
-            <div className="flex-1 flex gap-4">
-              <div className="flex-1 relative">
+          <div className="flex flex-col gap-6">
+            {/* Top Row: Search Inputs & Filters Button */}
+            <div className="flex flex-col md:flex-row gap-4 items-center">
+              {/* Search input */}
+              <div className="flex-1 relative w-full">
                 <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
                   type="text"
                   placeholder="Search schools..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-slate-50/50"
                 />
               </div>
-              <div className="w-48 relative">
+              
+              {/* Location input */}
+              <div className="w-full md:w-64 relative">
                 <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-slate-400" />
                 <input
                   type="text"
                   placeholder="Location"
                   value={location}
                   onChange={(e) => setLocation(e.target.value)}
-                  className="w-full pl-12 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent"
+                  className="w-full pl-12 pr-4 py-3 border-2 border-slate-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-amber-500 focus:border-transparent bg-slate-50/50"
                 />
               </div>
-            </div>
 
-            {/* Board Filter */}
-            <div className="flex gap-2">
-              {boards.map((board) => (
-                <button
-                  key={board}
-                  onClick={() => setSelectedBoard(board)}
-                  className={`px-6 py-3 rounded-xl font-medium transition-all ${
-                    selectedBoard === board
-                      ? 'bg-slate-900 text-white shadow-lg'
-                      : 'bg-slate-100 text-slate-700 hover:bg-slate-200'
-                  }`}
-                >
-                  {board}
-                </button>
-              ))}
+              {/* Filters Button */}
               <Button
                 variant="outline"
                 onClick={() => setShowFilters(!showFilters)}
-                className="border-2 border-slate-300"
+                className="w-full md:w-auto border-2 border-slate-300 hover:bg-slate-50 px-6 py-6 rounded-xl font-bold flex items-center justify-center gap-2 cursor-pointer h-[50px]"
               >
-                <SlidersHorizontal className="w-5 h-5 mr-2" />
-                Filters
+                <SlidersHorizontal className="w-5 h-5" />
+                <span>Filters</span>
               </Button>
+            </div>
+
+            {/* Bottom Row: Board Filters */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 lg:grid-cols-7 gap-2.5 w-full pt-2">
+              {boards.map((board) => (
+                <button
+                  key={board.name}
+                  onClick={() => setSelectedBoard(board.name)}
+                  className={`px-4 py-3 rounded-xl transition-all duration-300 flex flex-col items-center justify-center text-center cursor-pointer border ${
+                    selectedBoard === board.name
+                      ? 'bg-slate-900 text-white border-slate-900 shadow-md scale-[1.02]'
+                      : 'bg-slate-50 text-slate-700 border-slate-200 hover:bg-slate-100 hover:border-slate-300'
+                  }`}
+                >
+                  <span className="text-sm font-extrabold tracking-wide">{board.label}</span>
+                  <span className={`text-[10px] mt-0.5 font-semibold transition-colors ${
+                    selectedBoard === board.name ? 'text-slate-300' : 'text-slate-500'
+                  }`}>
+                    {board.desc}
+                  </span>
+                </button>
+              ))}
             </div>
           </div>
 
@@ -216,13 +251,14 @@ export function SchoolDirectory() {
 
       {/* Schools List */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="mb-8">
-          <h2 className="text-2xl mb-2">Verified Schools in Your Area</h2>
-          <p className="text-slate-600">Showing {schools.length} schools</p>
+        <div className="mb-8 font-semibold">
+          <h2 className="text-2xl mb-2 text-slate-900 font-extrabold">Verified Schools in Your Area</h2>
+          <p className="text-slate-500">Showing {filteredSchools.length} schools</p>
         </div>
 
         <div className="grid gap-8">
-          {schools.map((school, index) => (
+          {filteredSchools.length > 0 ? (
+            filteredSchools.map((school, index) => (
             <motion.div
               key={school.id}
               initial={{ opacity: 0, y: 20 }}
@@ -263,22 +299,7 @@ export function SchoolDirectory() {
                           <span>{school.board}</span>
                         </span>
                       </div>
-                      <div className="flex items-center space-x-1 mb-4">
-                        <div className="flex">
-                          {[...Array(5)].map((_, i) => (
-                            <Star
-                              key={i}
-                              className={`w-5 h-5 ${
-                                i < Math.floor(school.rating)
-                                  ? 'fill-amber-400 text-amber-400'
-                                  : 'text-slate-300'
-                              }`}
-                            />
-                          ))}
-                        </div>
-                        <span className="text-sm">{school.rating}</span>
-                        <span className="text-sm text-slate-500">({school.reviews} reviews)</span>
-                      </div>
+                      {/* Removed Star Rating Block */}
                     </div>
                   </div>
 
@@ -337,7 +358,14 @@ export function SchoolDirectory() {
                 </div>
               </div>
             </motion.div>
-          ))}
+          ))
+        ) : (
+          <div className="text-center py-16 bg-slate-50 border-2 border-dashed border-slate-200 rounded-3xl">
+            <School className="w-16 h-16 mx-auto text-slate-350 mb-4" />
+            <h3 className="text-xl font-bold text-slate-800 mb-2">No Schools Found</h3>
+            <p className="text-slate-500">Try adjusting your search query, location, or filters.</p>
+          </div>
+        )}
         </div>
       </div>
 

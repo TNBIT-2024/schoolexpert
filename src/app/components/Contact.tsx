@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
-import { Mail, MapPin, Send, CheckCircle2 } from 'lucide-react';
+import { Mail, Send, CheckCircle2 } from 'lucide-react';
 import { Button } from './ui/button';
 
 export function Contact() {
@@ -89,6 +89,8 @@ export function Contact() {
                   </a>
                 </div>
               </div>
+
+
 
             </div>
           </div>

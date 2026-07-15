@@ -11,6 +11,7 @@ html, body {
   background: #efe9e0 !important;
   background-image: var(--bg-landing) !important;
   background-attachment: fixed !important;
+  overflow-x: hidden;
 }
 
 #root {

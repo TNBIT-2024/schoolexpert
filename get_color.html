@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html>
+<body>
+  <canvas id="canvas"></canvas>
+  <div id="result" style="font-size: 24px; font-family: monospace; white-space: pre;">Loading...</div>
+  <script>
+    const img = new Image();
+    img.src = "file:///C:/Users/Admin/.gemini/antigravity/brain/6b6661be-cd50-4ff2-867b-62ceaff1c576/media__1782195775914.png";
+    img.onload = function() {
+      const canvas = document.getElementById('canvas');
+      canvas.width = img.width;
+      canvas.height = img.height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0);
+      const data = ctx.getImageData(0, 0, img.width, img.height).data;
+      
+      const colorCounts = {};
+      for (let i = 0; i < data.length; i += 4) {
+        const r = data[i];
+        const g = data[i+1];
+        const b = data[i+2];
+        const a = data[i+3];
+        const rgb = `rgb(${r},${g},${b})`;
+        colorCounts[rgb] = (colorCounts[rgb] || 0) + 1;
+      }
+      
+      const sortedColors = Object.entries(colorCounts).sort((a,b) => b[1] - a[1]);
+      const resultDiv = document.getElementById('result');
+      resultDiv.innerText = JSON.stringify(sortedColors.slice(0, 5), null, 2);
+    };
+    img.onerror = function(err) {
+      document.getElementById('result').innerText = "Error loading image: " + JSON.stringify(err);
+    };
+  </script>
+</body>
+</html>

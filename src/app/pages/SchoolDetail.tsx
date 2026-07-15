@@ -18,7 +18,7 @@ export function SchoolDetail() {
 
   const school = {
     id: 1,
-    name: 'ABC Public School',
+    name: 'Delhi Public School',
     location: 'Mysore, Karnataka',
     address: '123 Education Street, Vijayanagar, Mysore - 570017, Karnataka, India',
     board: 'CBSE',
@@ -29,14 +29,14 @@ export function SchoolDetail() {
     verified: true,
     infrastructureScore: 92,
     phone: '+91 821 2345678',
-    email: 'info@abcmysore.edu.in',
-    website: 'www.abcmysore.edu.in',
+    email: 'info@dpsmysore.edu.in',
+    website: 'www.dpsmysore.edu.in',
 
     management: {
       type: 'CBSE Affiliated',
       affiliationNumber: '123456',
       principal: 'Dr. Rajesh Kumar',
-      establishedBy: 'ABC School Society',
+      establishedBy: 'Delhi Public School Society',
     },
 
     syllabus: {
@@ -95,21 +95,21 @@ export function SchoolDetail() {
       <Navbar />
 
       {/* Hero Section */}
-      <div className="pt-24 pb-8 bg-gradient-to-br from-slate-500 via-slate-600 to-slate-900">
+      <div className="pt-32 pb-8 bg-gradient-to-br from-slate-100/80 via-slate-50/80 to-white/80 border-b border-slate-200/50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-          <Link to="/schools" className="inline-flex items-center space-x-2 text-slate-300 hover:text-white mb-6 transition-colors">
+          <Link to="/schools" className="inline-flex items-center space-x-2 text-slate-500 hover:text-slate-900 mb-6 transition-colors font-semibold">
             <ChevronLeft className="w-5 h-5" />
             <span>Back to directory</span>
           </Link>
 
           <div className="grid lg:grid-cols-3 gap-8">
             {/* Main Info */}
-            <div className="lg:col-span-2 text-white">
+            <div className="lg:col-span-2 text-slate-900">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex-1">
                   <div className="flex items-center space-x-3 mb-4">
                     {school.verified && (
-                      <div className="inline-flex items-center space-x-1 bg-green-500 px-3 py-1 rounded-full text-sm">
+                      <div className="inline-flex items-center space-x-1 bg-green-500 text-white px-3 py-1 rounded-full text-sm">
                         <CheckCircle className="w-4 h-4" />
                         <span>Verified</span>
                       </div>
@@ -119,25 +119,10 @@ export function SchoolDetail() {
                       <span>{school.board}</span>
                     </div>
                   </div>
-                  <h1 className="text-4xl lg:text-5xl mb-4">{school.name}</h1>
-                  <div className="flex items-center space-x-1 mb-4">
-                    <div className="flex">
-                      {[...Array(5)].map((_, i) => (
-                        <Star
-                          key={i}
-                          className={`w-6 h-6 ${
-                            i < Math.floor(school.rating)
-                              ? 'fill-amber-400 text-amber-400'
-                              : 'text-slate-500'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                    <span className="text-xl">{school.rating}</span>
-                    <span className="text-slate-400">({school.reviews} verified reviews)</span>
-                  </div>
-                  <div className="flex items-center space-x-2 text-slate-300">
-                    <MapPin className="w-5 h-5" />
+                  <h1 className="text-4xl lg:text-5xl mb-4 text-slate-900 font-extrabold">{school.name}</h1>
+                  {/* Removed Star Rating Block */}
+                  <div className="flex items-center space-x-2 text-slate-600 font-medium">
+                    <MapPin className="w-5 h-5 text-slate-400" />
                     <span>{school.address}</span>
                   </div>
                 </div>
@@ -145,20 +130,20 @@ export function SchoolDetail() {
 
               {/* Quick Stats */}
               <div className="grid grid-cols-3 gap-4 mt-6">
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                  <Calendar className="w-6 h-6 text-amber-400 mb-2" />
-                  <div className="text-2xl mb-1">{school.founded}</div>
-                  <div className="text-sm text-slate-400">Founded</div>
+                <div className="bg-white/80 border border-slate-200/60 rounded-xl p-4 shadow-sm">
+                  <Calendar className="w-6 h-6 text-amber-600 mb-2" />
+                  <div className="text-2xl font-bold text-slate-900 mb-1">{school.founded}</div>
+                  <div className="text-sm text-slate-500 font-semibold">Founded</div>
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                  <Users className="w-6 h-6 text-amber-400 mb-2" />
-                  <div className="text-2xl mb-1">{school.students}</div>
-                  <div className="text-sm text-slate-400">Students</div>
+                <div className="bg-white/80 border border-slate-200/60 rounded-xl p-4 shadow-sm">
+                  <Users className="w-6 h-6 text-amber-600 mb-2" />
+                  <div className="text-2xl font-bold text-slate-900 mb-1">{school.students}</div>
+                  <div className="text-sm text-slate-500 font-semibold">Students</div>
                 </div>
-                <div className="bg-white/10 backdrop-blur-sm rounded-xl p-4">
-                  <Trophy className="w-6 h-6 text-amber-400 mb-2" />
-                  <div className="text-2xl mb-1">{school.infrastructureScore}%</div>
-                  <div className="text-sm text-slate-400">Infrastructure</div>
+                <div className="bg-white/80 border border-slate-200/60 rounded-xl p-4 shadow-sm">
+                  <Trophy className="w-6 h-6 text-amber-600 mb-2" />
+                  <div className="text-2xl font-bold text-slate-900 mb-1">{school.infrastructureScore}%</div>
+                  <div className="text-sm text-slate-500 font-semibold">Infrastructure</div>
                 </div>
               </div>
             </div>

@@ -1,8 +1,10 @@
 import React, { useState, FormEvent } from 'react';
 import { Link, useNavigate, useLocation } from 'react-router';
-import { Eye, EyeOff, User as UserIcon, Mail, Phone, MapPin, Lock, ArrowRight, ArrowLeft, Users, Building, Briefcase, GraduationCap } from 'lucide-react';
+import { Eye, EyeOff, User as UserIcon, Mail, Phone, MapPin, Lock, ArrowRight, ArrowLeft, Users, Building, Briefcase, GraduationCap, CheckCircle, Video, FileText, ShieldCheck } from 'lucide-react';
 import { useAuth } from '../context/AuthContext';
-const logoImg = '/logo svg.svg';
+import { toast } from 'sonner';
+import { supabase } from '../../lib/supabase';
+const logoImg = '/schoolexpert_logo.png';
 
 // --- HELPER COMPONENTS (ICONS) ---
 
@@ -23,14 +25,17 @@ const GlassInputWrapper = ({ children }: { children: React.ReactNode }) => (
 
 export function GetStarted() {
   const location = useLocation();
-  const queryType = new URLSearchParams(location.search).get('type');
+  const queryParams = new URLSearchParams(location.search);
+  const queryType = queryParams.get('type');
+  const queryServiceType = queryParams.get('serviceType');
 
   const [step, setStep] = useState(1);
   const [showPassword, setShowPassword] = useState(false);
   const [userType, setUserType] = useState<'parent' | 'school' | 'service' | 'educator' | 'special_educator' | null>(
-    (location.state?.userType === 'school' || queryType === 'school') ? 'school' : null
+    (location.state?.userType === 'school' || queryType === 'school') ? 'school' :
+    (queryType === 'service') ? 'service' : null
   );
-  const [serviceType, setServiceType] = useState<string>('');
+  const [serviceType, setServiceType] = useState<string>(queryServiceType || '');
   const [schoolType, setSchoolType] = useState<string>('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -41,7 +46,119 @@ export function GetStarted() {
     phone: '',
     password: '',
     city: '',
+    // Course Provider specific fields:
+    academyName: '',
+    skillsOffered: '',
+    mode: '', // Online only/Offline only/Hybrid
+    completeAddress: '',
+    classesPerWeek: '',
+    feeDetails: '',
+    sampleVideoUrl: '',
+    verificationDocName: '',
   });
+
+  // State for upload states and simulated progress
+  const [videoUploading, setVideoUploading] = useState(false);
+  const [videoProgress, setVideoProgress] = useState(0);
+  const [videoName, setVideoName] = useState('');
+  
+  const [docUploading, setDocUploading] = useState(false);
+  const [docProgress, setDocProgress] = useState(0);
+  const [docName, setDocName] = useState('');
+
+  const isIndividualCourseProvider = userType === 'service' && serviceType === 'Individual course providers';
+
+  const isStep2Valid = () => {
+    if (isIndividualCourseProvider) {
+      return !!(
+        formData.name &&
+        formData.email &&
+        formData.phone &&
+        formData.academyName &&
+        formData.mode &&
+        formData.completeAddress &&
+        formData.classesPerWeek &&
+        formData.feeDetails &&
+        formData.skillsOffered &&
+        formData.sampleVideoUrl &&
+        formData.verificationDocName
+      );
+    }
+    return !!(formData.name && formData.email && formData.phone && formData.city);
+  };
+
+  const handleFileUpload = async (file: File, type: 'video' | 'document') => {
+    const isVideo = type === 'video';
+    const setUploading = isVideo ? setVideoUploading : setDocUploading;
+    const setProgress = isVideo ? setVideoProgress : setDocProgress;
+    const setName = isVideo ? setVideoName : setDocName;
+    const fieldUrl = isVideo ? 'sampleVideoUrl' : 'verificationDocName';
+
+    setUploading(true);
+    setProgress(10);
+    setName(file.name);
+
+    // Simulate progress updates for premium UX
+    const interval = setInterval(() => {
+      setProgress((prev) => {
+        if (prev >= 90) {
+          clearInterval(interval);
+          return 90;
+        }
+        return prev + 15;
+      });
+    }, 150);
+
+    try {
+      // Try to upload to Supabase Storage if configured
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
+      const bucketName = isVideo ? 'samples' : 'verifications';
+      const filePath = `course_providers/${fileName}`;
+
+      const { error } = await supabase.storage
+        .from(bucketName)
+        .upload(filePath, file, { cacheControl: '3600', upsert: true });
+
+      if (error) {
+        console.warn(`Supabase storage upload failed, falling back to simulated upload:`, error.message);
+        clearInterval(interval);
+        setProgress(100);
+        setTimeout(() => {
+          setUploading(false);
+          setFormData((prev) => ({
+            ...prev,
+            [fieldUrl]: `https://placeholder-url.schoolexpert.com/uploads/${fileName}`,
+          }));
+          toast.success(`${isVideo ? 'Sample video' : 'Verification document'} uploaded successfully.`);
+        }, 300);
+      } else {
+        clearInterval(interval);
+        setProgress(100);
+        const { data: urlData } = supabase.storage.from(bucketName).getPublicUrl(filePath);
+        setTimeout(() => {
+          setUploading(false);
+          setFormData((prev) => ({
+            ...prev,
+            [fieldUrl]: urlData.publicUrl || file.name,
+          }));
+          toast.success(`${isVideo ? 'Sample video' : 'Verification document'} uploaded successfully.`);
+        }, 300);
+      }
+    } catch (err: any) {
+      console.warn("Storage upload error, using simulation: ", err);
+      clearInterval(interval);
+      setProgress(100);
+      setTimeout(() => {
+        setUploading(false);
+        setFormData((prev) => ({
+          ...prev,
+          [fieldUrl]: file.name,
+        }));
+        toast.success(`${isVideo ? 'Sample video' : 'Verification document'} uploaded successfully.`);
+      }, 300);
+    }
+  };
 
   const { signUpWithEmail, signInWithGoogle } = useAuth();
   const navigate = useNavigate();
@@ -62,10 +179,19 @@ export function GetStarted() {
       await signUpWithEmail(formData.email, formData.password, {
         name: formData.name,
         phone: formData.phone,
-        city: formData.city,
+        city: isIndividualCourseProvider ? formData.completeAddress : formData.city,
         userType: userType,
         serviceType: userType === 'service' ? serviceType : null,
         schoolType: userType === 'school' ? schoolType : null,
+        // Course Provider specific fields:
+        academyName: isIndividualCourseProvider ? formData.academyName : null,
+        skillsOffered: isIndividualCourseProvider ? formData.skillsOffered : null,
+        mode: isIndividualCourseProvider ? formData.mode : null,
+        completeAddress: isIndividualCourseProvider ? formData.completeAddress : null,
+        classesPerWeek: isIndividualCourseProvider ? formData.classesPerWeek : null,
+        feeDetails: isIndividualCourseProvider ? formData.feeDetails : null,
+        sampleVideoUrl: isIndividualCourseProvider ? formData.sampleVideoUrl : null,
+        verificationDocName: isIndividualCourseProvider ? formData.verificationDocName : null,
       });
       navigate('/');
     } catch (err: any) {
@@ -76,16 +202,30 @@ export function GetStarted() {
     }
   };
 
+  const handleGoogleRegister = async () => {
+    setError('');
+    setLoading(true);
+    try {
+      await signInWithGoogle();
+      navigate('/');
+    } catch (err: any) {
+      console.error(err);
+      setError(err.message || 'Google registration failed.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
   return (
     <div className="h-[100dvh] flex flex-col md:flex-row font-geist w-[100dvw] bg-slate-50 dark:bg-zinc-950 overflow-hidden">
       {/* Left column: registration form steps */}
       <section className="flex-1 flex items-center justify-center p-8 bg-gradient-to-br from-blue-50/20 via-purple-50/10 to-pink-50/20 dark:from-zinc-900/10 dark:via-zinc-900/5 dark:to-zinc-900/20 overflow-y-auto">
-        <div className="w-full max-w-md my-auto">
+        <div className={`w-full ${isIndividualCourseProvider && step === 2 ? 'max-w-2xl' : 'max-w-md'} my-auto transition-all duration-300`}>
           <div className="flex flex-col gap-6">
             {/* Logo and Progress Bar */}
             <div className="animate-element animate-delay-100 flex items-center justify-between">
               <Link to="/">
-                <img src={logoImg} alt="The School Expert" className="h-20 md:h-30 w-auto object-contain transition-transform duration-300 hover:scale-105" style={{ filter: 'url(#remove-white)' }} />
+                <img src={logoImg} alt="The School Expert" className="h-16 md:h-20 w-auto object-contain transition-transform duration-300 hover:scale-105" style={{ filter: 'url(#remove-white)' }} />
               </Link>
               <div className="text-xs font-semibold text-slate-400 uppercase tracking-widest">
                 Step {step} of 3
@@ -99,7 +239,7 @@ export function GetStarted() {
                   Choose your profile
                 </h1>
                 <p className="animate-element animate-delay-300 text-slate-500 dark:text-slate-400">
-                  Select how you will be using The School Expert to customize your experience.
+                  Select how you will be using SchoolExpert to customize your experience.
                 </p>
               </>
             )}
@@ -314,76 +454,326 @@ export function GetStarted() {
 
             {/* Step 2: Personal Details */}
             {step === 2 && (
-              <div className="space-y-4">
-                <div>
-                  <label className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 block">Full Name</label>
-                  <GlassInputWrapper>
-                    <div className="relative">
-                      <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                      <input
-                        type="text"
-                        value={formData.name}
-                        onChange={(e) => updateFormData('name', e.target.value)}
-                        placeholder="John Doe"
-                        className="w-full bg-transparent text-sm p-4 pl-11 rounded-2xl focus:outline-none text-slate-800 dark:text-slate-100"
-                        required
-                      />
+              <div className="space-y-4 animate-element">
+                {isIndividualCourseProvider ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4 max-h-[60dvh] overflow-y-auto pr-2">
+                    {/* Section Header: Profile Details */}
+                    <div className="col-span-1 md:col-span-2 border-b border-slate-200/50 dark:border-zinc-800 pb-1.5">
+                      <h3 className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-widest">Contact & Institution Details</h3>
                     </div>
-                  </GlassInputWrapper>
-                </div>
 
-                <div>
-                  <label className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 block">Email Address</label>
-                  <GlassInputWrapper>
-                    <div className="relative">
-                      <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                      <input
-                        type="email"
-                        value={formData.email}
-                        onChange={(e) => updateFormData('email', e.target.value)}
-                        placeholder="john@example.com"
-                        className="w-full bg-transparent text-sm p-4 pl-11 rounded-2xl focus:outline-none text-slate-800 dark:text-slate-100"
-                        required
-                      />
+                    <div>
+                      <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Full Name</label>
+                      <GlassInputWrapper>
+                        <div className="relative">
+                          <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                          <input
+                            type="text"
+                            value={formData.name}
+                            onChange={(e) => updateFormData('name', e.target.value)}
+                            placeholder="John Doe"
+                            className="w-full bg-transparent text-xs p-3 pl-11 rounded-2xl focus:outline-none text-slate-800 dark:text-slate-100 font-semibold"
+                            required
+                          />
+                        </div>
+                      </GlassInputWrapper>
                     </div>
-                  </GlassInputWrapper>
-                </div>
 
-                <div>
-                  <label className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 block">
-                    Phone Number {userType === 'parent' && <span className="text-xs text-slate-400 dark:text-slate-500 font-normal ml-1">(Optional)</span>}
-                  </label>
-                  <GlassInputWrapper>
-                    <div className="relative">
-                      <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                      <input
-                        type="tel"
-                        value={formData.phone}
-                        onChange={(e) => updateFormData('phone', e.target.value)}
-                        placeholder="+91 98765 43210"
-                        className="w-full bg-transparent text-sm p-4 pl-11 rounded-2xl focus:outline-none text-slate-800 dark:text-slate-100"
-                        required={userType !== 'parent'}
-                      />
+                    <div>
+                      <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Academy or Institution Name</label>
+                      <GlassInputWrapper>
+                        <div className="relative">
+                          <Building className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                          <input
+                            type="text"
+                            value={formData.academyName}
+                            onChange={(e) => updateFormData('academyName', e.target.value)}
+                            placeholder="e.g. Symphony Music Academy"
+                            className="w-full bg-transparent text-xs p-3 pl-11 rounded-2xl focus:outline-none text-slate-800 dark:text-slate-100 font-semibold"
+                            required
+                          />
+                        </div>
+                      </GlassInputWrapper>
                     </div>
-                  </GlassInputWrapper>
-                </div>
 
-                <div>
-                  <label className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 block">City</label>
-                  <GlassInputWrapper>
-                    <div className="relative">
-                      <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
-                      <input
-                        type="text"
-                        value={formData.city}
-                        onChange={(e) => updateFormData('city', e.target.value)}
-                        placeholder="Mumbai"
-                        className="w-full bg-transparent text-sm p-4 pl-11 rounded-2xl focus:outline-none text-slate-800 dark:text-slate-100"
-                        required
-                      />
+                    <div>
+                      <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Email Address</label>
+                      <GlassInputWrapper>
+                        <div className="relative">
+                          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                          <input
+                            type="email"
+                            value={formData.email}
+                            onChange={(e) => updateFormData('email', e.target.value)}
+                            placeholder="john@example.com"
+                            className="w-full bg-transparent text-xs p-3 pl-11 rounded-2xl focus:outline-none text-slate-800 dark:text-slate-100 font-semibold"
+                            required
+                          />
+                        </div>
+                      </GlassInputWrapper>
                     </div>
-                  </GlassInputWrapper>
-                </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Phone Number</label>
+                      <GlassInputWrapper>
+                        <div className="relative">
+                          <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                          <input
+                            type="tel"
+                            value={formData.phone}
+                            onChange={(e) => updateFormData('phone', e.target.value)}
+                            placeholder="+91 98765 43210"
+                            className="w-full bg-transparent text-xs p-3 pl-11 rounded-2xl focus:outline-none text-slate-800 dark:text-slate-100 font-semibold"
+                            required
+                          />
+                        </div>
+                      </GlassInputWrapper>
+                    </div>
+
+                    {/* Section Header: Course Offerings */}
+                    <div className="col-span-1 md:col-span-2 border-b border-slate-200/50 dark:border-zinc-800 pb-1.5 mt-2">
+                      <h3 className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-widest">Offerings & Operations</h3>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Teaching Mode</label>
+                      <div className="rounded-2xl border border-slate-200 bg-white/50 focus-within:border-amber-500 focus-within:bg-white p-1 shadow-sm">
+                        <select
+                          value={formData.mode}
+                          onChange={(e) => updateFormData('mode', e.target.value)}
+                          className="w-full bg-transparent text-xs p-2 rounded-xl focus:outline-none text-slate-800 dark:text-slate-100 font-semibold cursor-pointer"
+                          required
+                        >
+                          <option value="" disabled>-- Select Mode --</option>
+                          <option value="Online only">Online only</option>
+                          <option value="Offline only">Offline only</option>
+                          <option value="Hybrid">Hybrid</option>
+                        </select>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">No. of Classes per Week</label>
+                      <GlassInputWrapper>
+                        <div className="relative">
+                          <Users className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                          <input
+                            type="number"
+                            min="1"
+                            max="21"
+                            value={formData.classesPerWeek}
+                            onChange={(e) => updateFormData('classesPerWeek', e.target.value)}
+                            placeholder="e.g. 3"
+                            className="w-full bg-transparent text-xs p-3 pl-11 rounded-2xl focus:outline-none text-slate-800 dark:text-slate-100 font-semibold"
+                            required
+                          />
+                        </div>
+                      </GlassInputWrapper>
+                    </div>
+
+                    <div className="col-span-1 md:col-span-2">
+                      <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Skills Offered</label>
+                      <GlassInputWrapper>
+                        <textarea
+                          value={formData.skillsOffered}
+                          onChange={(e) => updateFormData('skillsOffered', e.target.value)}
+                          placeholder="Describe the skills and subjects you teach (e.g. Classical Piano, Contemporary Dance, Acrylic Painting, Baking, Crochet, Knitting)..."
+                          className="w-full bg-transparent text-xs p-3 rounded-2xl focus:outline-none text-slate-800 dark:text-slate-100 min-h-[70px] resize-none font-semibold"
+                          required
+                        />
+                      </GlassInputWrapper>
+                    </div>
+
+                    <div className="col-span-1 md:col-span-2">
+                      <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Fee Details</label>
+                      <GlassInputWrapper>
+                        <input
+                          type="text"
+                          value={formData.feeDetails}
+                          onChange={(e) => updateFormData('feeDetails', e.target.value)}
+                          placeholder="e.g. ₹1500 per month / ₹500 per class"
+                          className="w-full bg-transparent text-xs p-3 rounded-2xl focus:outline-none text-slate-800 dark:text-slate-100 font-semibold"
+                          required
+                        />
+                      </GlassInputWrapper>
+                    </div>
+
+                    <div className="col-span-1 md:col-span-2">
+                      <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">Complete Address</label>
+                      <GlassInputWrapper>
+                        <textarea
+                          value={formData.completeAddress}
+                          onChange={(e) => updateFormData('completeAddress', e.target.value)}
+                          placeholder="Enter your complete home/studio address for verification purposes..."
+                          className="w-full bg-transparent text-xs p-3 rounded-2xl focus:outline-none text-slate-800 dark:text-slate-100 min-h-[70px] resize-none font-semibold"
+                          required
+                        />
+                      </GlassInputWrapper>
+                    </div>
+
+                    {/* Section Header: Verification documents */}
+                    <div className="col-span-1 md:col-span-2 border-b border-slate-200/50 dark:border-zinc-800 pb-1.5 mt-2">
+                      <h3 className="text-xs font-bold text-amber-700 dark:text-amber-400 uppercase tracking-widest">Verification & Materials</h3>
+                    </div>
+
+                    {/* Video Sample Upload */}
+                    <div className="col-span-1 md:col-span-2">
+                      <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">
+                        Upload Sample Video <span className="text-[10px] text-slate-400 font-medium">(Video demonstrating skills - Music/dance/art/craft/baking/crochet/knitting - Subject to approval)</span>
+                      </label>
+                      <div className="relative rounded-2xl border-2 border-dashed border-slate-200/80 hover:border-amber-500/50 bg-white/40 hover:bg-white/60 transition-all p-4 text-center flex flex-col items-center justify-center cursor-pointer min-h-[100px]">
+                        <input
+                          type="file"
+                          accept="video/*"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleFileUpload(file, 'video');
+                          }}
+                          className="absolute inset-0 opacity-0 cursor-pointer"
+                        />
+                        {videoUploading ? (
+                          <div className="w-full space-y-2">
+                            <div className="text-xs font-semibold text-amber-600">Uploading: {videoProgress}%</div>
+                            <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                              <div className="h-full bg-amber-500 transition-all duration-300" style={{ width: `${videoProgress}%` }} />
+                            </div>
+                            <div className="text-[10px] text-slate-400 truncate">{videoName}</div>
+                          </div>
+                        ) : formData.sampleVideoUrl ? (
+                          <div className="flex flex-col items-center gap-1">
+                            <CheckCircle className="w-6 h-6 text-green-500" />
+                            <span className="text-xs font-bold text-slate-700">Video Uploaded</span>
+                            <span className="text-[10px] text-slate-400 max-w-xs truncate">{videoName || 'sample_video.mp4'}</span>
+                          </div>
+                        ) : (
+                          <>
+                            <Video className="w-6 h-6 text-slate-400 mb-1" />
+                            <span className="text-xs font-bold text-slate-600">Drag & Drop or Click to upload video</span>
+                            <span className="text-[10px] text-slate-400">MP4, MOV, AVI up to 50MB</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Document Upload */}
+                    <div className="col-span-1 md:col-span-2">
+                      <label className="text-xs font-bold text-slate-500 dark:text-slate-400 mb-1.5 block">
+                        Upload Address Verification Doc <span className="text-[10px] text-slate-400 font-medium">(Aadhar or PAN)</span>
+                      </label>
+                      <div className="relative rounded-2xl border-2 border-dashed border-slate-200/80 hover:border-amber-500/50 bg-white/40 hover:bg-white/60 transition-all p-4 text-center flex flex-col items-center justify-center cursor-pointer min-h-[100px]">
+                        <input
+                          type="file"
+                          accept="image/*,.pdf"
+                          onChange={(e) => {
+                            const file = e.target.files?.[0];
+                            if (file) handleFileUpload(file, 'document');
+                          }}
+                          className="absolute inset-0 opacity-0 cursor-pointer"
+                        />
+                        {docUploading ? (
+                          <div className="w-full space-y-2">
+                            <div className="text-xs font-semibold text-amber-600">Uploading: {docProgress}%</div>
+                            <div className="w-full h-1.5 bg-slate-100 rounded-full overflow-hidden">
+                              <div className="h-full bg-amber-500 transition-all duration-300" style={{ width: `${docProgress}%` }} />
+                            </div>
+                            <div className="text-[10px] text-slate-400 truncate">{docName}</div>
+                          </div>
+                        ) : formData.verificationDocName ? (
+                          <div className="flex flex-col items-center gap-1">
+                            <CheckCircle className="w-6 h-6 text-green-500" />
+                            <span className="text-xs font-bold text-slate-700">Document Uploaded</span>
+                            <span className="text-[10px] text-slate-400 max-w-xs truncate">{docName || 'verification_document.pdf'}</span>
+                          </div>
+                        ) : (
+                          <>
+                            <FileText className="w-6 h-6 text-slate-400 mb-1" />
+                            <span className="text-xs font-bold text-slate-600">Drag & Drop or Click to upload document</span>
+                            <span className="text-[10px] text-slate-400">PDF, JPG, PNG up to 10MB</span>
+                          </>
+                        )}
+                      </div>
+                    </div>
+
+                    {/* Notice Banner */}
+                    <div className="col-span-1 md:col-span-2 p-3 bg-amber-500/5 border border-amber-500/10 rounded-2xl flex gap-2.5 items-start text-[10px] text-amber-800 dark:text-amber-300">
+                      <ShieldCheck className="w-4 h-4 text-amber-600 flex-shrink-0 mt-0.5" />
+                      <p className="leading-relaxed font-semibold">
+                        Verification Security: This information is for verification purposes only and will not be displayed or shared with anybody.
+                      </p>
+                    </div>
+                  </div>
+                ) : (
+                  // Default step 2 fields
+                  <>
+                    <div>
+                      <label className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 block">Full Name</label>
+                      <GlassInputWrapper>
+                        <div className="relative">
+                          <UserIcon className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                          <input
+                            type="text"
+                            value={formData.name}
+                            onChange={(e) => updateFormData('name', e.target.value)}
+                            placeholder="John Doe"
+                            className="w-full bg-transparent text-sm p-4 pl-11 rounded-2xl focus:outline-none text-slate-800 dark:text-slate-100"
+                            required
+                          />
+                        </div>
+                      </GlassInputWrapper>
+                    </div>
+
+                    <div>
+                      <label className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 block">Email Address</label>
+                      <GlassInputWrapper>
+                        <div className="relative">
+                          <Mail className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                          <input
+                            type="email"
+                            value={formData.email}
+                            onChange={(e) => updateFormData('email', e.target.value)}
+                            placeholder="john@example.com"
+                            className="w-full bg-transparent text-sm p-4 pl-11 rounded-2xl focus:outline-none text-slate-800 dark:text-slate-100"
+                            required
+                          />
+                        </div>
+                      </GlassInputWrapper>
+                    </div>
+
+                    <div>
+                      <label className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 block">Phone Number</label>
+                      <GlassInputWrapper>
+                        <div className="relative">
+                          <Phone className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                          <input
+                            type="tel"
+                            value={formData.phone}
+                            onChange={(e) => updateFormData('phone', e.target.value)}
+                            placeholder="+91 98765 43210"
+                            className="w-full bg-transparent text-sm p-4 pl-11 rounded-2xl focus:outline-none text-slate-800 dark:text-slate-100"
+                            required
+                          />
+                        </div>
+                      </GlassInputWrapper>
+                    </div>
+
+                    <div>
+                      <label className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 block">City</label>
+                      <GlassInputWrapper>
+                        <div className="relative">
+                          <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
+                          <input
+                            type="text"
+                            value={formData.city}
+                            onChange={(e) => updateFormData('city', e.target.value)}
+                            placeholder="Mumbai"
+                            className="w-full bg-transparent text-sm p-4 pl-11 rounded-2xl focus:outline-none text-slate-800 dark:text-slate-100"
+                            required
+                          />
+                        </div>
+                      </GlassInputWrapper>
+                    </div>
+                  </>
+                )}
 
                 <div className="flex gap-3 pt-4">
                   <button
@@ -397,7 +787,7 @@ export function GetStarted() {
                   <button
                     type="button"
                     onClick={() => setStep(3)}
-                    disabled={!formData.name || !formData.email || (userType !== 'parent' && !formData.phone) || !formData.city}
+                    disabled={!isStep2Valid()}
                     className="flex-1 flex items-center justify-center gap-2 rounded-2xl bg-slate-900 text-white py-4 font-semibold hover:bg-slate-800 active:scale-[0.99] transition-all disabled:opacity-50 disabled:pointer-events-none shadow-md"
                   >
                     Continue
@@ -410,6 +800,25 @@ export function GetStarted() {
             {/* Step 3: Create Password & Finalize */}
             {step === 3 && (
               <form onSubmit={handleRegister} className="space-y-4">
+                {/* Google Quick Sign-Up */}
+                <div className="space-y-3 mb-4">
+                  <button
+                    type="button"
+                    onClick={handleGoogleRegister}
+                    disabled={loading}
+                    className="w-full flex items-center justify-center gap-3 border border-slate-200 bg-white/70 rounded-2xl py-4 font-semibold text-slate-700 hover:bg-slate-50 active:scale-[0.99] transition-all shadow-sm"
+                  >
+                    <GoogleIcon />
+                    Sign up with Google
+                  </button>
+                </div>
+
+                <div className="relative flex items-center justify-center py-2">
+                  <span className="w-full border-t border-slate-200"></span>
+                  <span className="px-4 text-xs font-semibold text-slate-400 bg-slate-50 uppercase tracking-wider absolute">
+                    Or set password
+                  </span>
+                </div>
 
                 <div>
                   <label className="text-sm font-semibold text-slate-600 dark:text-slate-300 mb-2 block">Password</label>

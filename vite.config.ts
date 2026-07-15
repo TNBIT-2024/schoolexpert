@@ -21,6 +21,22 @@ try {
   console.error('Error copying logo:', err);
 }
 
+// Copy user uploaded white logo to public/schoolexpert_logo_white.png
+try {
+  const sourcePath = 'C:\\Users\\Admin\\.gemini\\antigravity\\brain\\52d1bb00-3825-41d4-b8a3-5596fe3f6ce1\\media__1782366069480.png';
+  const publicDir = path.resolve(__dirname, 'public');
+  const targetPath = path.resolve(publicDir, 'schoolexpert_logo_white.png');
+
+  if (fs.existsSync(sourcePath)) {
+    fs.copyFileSync(sourcePath, targetPath);
+    console.log('Successfully copied white user logo to public/schoolexpert_logo_white.png');
+  } else {
+    console.warn('White logo source path not found:', sourcePath);
+  }
+} catch (err) {
+  console.error('Error copying white logo:', err);
+}
+
 // Copy Founding Partners poster to public/founding_partners_poster.png
 try {
   const sourcePath = 'C:\\Users\\Admin\\.gemini\\antigravity\\brain\\0c27cafd-9a7e-4c8e-a80e-acd96a69de87\\media__1780727187402.png';

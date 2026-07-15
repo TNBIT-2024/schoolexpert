@@ -8,7 +8,7 @@ const values = [
     icon: ShieldCheck,
     title: 'Trust & Verification',
     description:
-      'Get information about schools that are  verified and updated regularly. Get accurate details about facilities,  student-teacher ratios to present verified datasets you can rely on.',
+      'We personally audit campus facilities, boards, and student-teacher ratios to present verified datasets you can rely on.',
     color: 'from-amber-400/20 to-amber-600/5',
     border: 'border-amber-400/30',
     iconBg: 'bg-amber-500/10',
@@ -46,7 +46,7 @@ export function AboutUs() {
             What We Do
           </span>
           <h2 className="text-4xl md:text-5xl font-black text-slate-900 leading-[1.1] tracking-tight mb-8 max-w-none mx-auto">
-            Discover. Connect. Grow
+            Discover. Compare. Connect. Grow
           </h2>
           <div className="text-slate-500 text-base sm:text-lg leading-relaxed max-w-4xl mx-auto font-medium space-y-6 text-center">
             <p>

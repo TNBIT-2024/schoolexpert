@@ -20,7 +20,7 @@ export function Features() {
     {
       icon: Shield,
       title: 'Information',
-      description: 'All school information is verified and updated regularly. Get accurate details about facilities.',
+      description: 'All school information is verified and updated regularly. Get accurate details about admissions, fees, and facilities.',
       gradient: 'from-teal-500 to-cyan-500',
       delay: 0.7,
     },
